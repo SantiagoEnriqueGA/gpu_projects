@@ -1,22 +1,13 @@
 import time
 import numpy as np
 from numba import vectorize
+from utils import timing_decorator, avg_timing_decorator
 
-def timing_decorator(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(f"Execution time for {func.__name__} is {execution_time} seconds")
-        return result
-    return wrapper
-
-@timing_decorator
+@avg_timing_decorator
 def multiplyVectors(v1, v2):
     return v1 * v2
 
-@timing_decorator
+@avg_timing_decorator
 @vectorize(['float32(float32, float32)'], target='parallel') # target='cuda' for GPU
 def multiplyVectorsNumba(v1, v2):
     return v1 * v2
@@ -32,7 +23,7 @@ def main():
     v3 = multiplyVectors(v1, v2)
     print(f"Last 5 elements of the result: {v3[-5:]}")
 
-    print(f"\n")
+    print("")
 
     v3 = multiplyVectorsNumba(v1, v2)
     print(f"Last 5 elements of the result: {v3[-5:]}")
