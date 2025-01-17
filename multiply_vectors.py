@@ -25,12 +25,14 @@ def multiplyVectorsNumba(v1, v2):
 def main():
     N = 640_000_000
     # N = 1_000_000
-    v1 = np.ones(N, dtype=np.float32)
-    v2 = np.ones(N, dtype=np.float32)
-    
+
+    v1 = np.random.rand(N).astype(np.float32)
+    v2 = np.random.rand(N).astype(np.float32)
     
     v3 = multiplyVectors(v1, v2)
     print(f"Last 5 elements of the result: {v3[-5:]}")
+
+    print(f"\n")
 
     v3 = multiplyVectorsNumba(v1, v2)
     print(f"Last 5 elements of the result: {v3[-5:]}")
