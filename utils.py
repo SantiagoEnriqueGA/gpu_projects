@@ -39,17 +39,19 @@ def enable_output():
     
 def check_numba_cuda():
     try:
+        suppress_output()
         import numba
         from numba import cuda
         cuda.detect()
+        enable_output()
         return True
     except:
         return False
     
 def check_openCl():
     try:
-        import pyopencl as cl
         suppress_output()
+        import pyopencl as cl
         os.environ['PYOPENCL_CTX'] = PYOPENCL_CTX_VERSION
         cl.create_some_context()
         enable_output()

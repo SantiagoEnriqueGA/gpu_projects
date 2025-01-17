@@ -9,6 +9,7 @@ from utils import timing_decorator, avg_timing_decorator
 from utils import suppress_output, enable_output
 from utils import check_numba_cuda, check_openCl
 
+PYOPENCL_CTX_VERSION = '1'
 
 # -------------------------------------------------------------------------------------------------
 # Functions to create the Mandelbrot fractal on the CPU and GPU
@@ -82,7 +83,7 @@ def create_fractal_numba(min_x, max_x, min_y, max_y, image, iters):
 def create_fractal_opencl(min_x, max_x, min_y, max_y, image, iters):
     """Create a Mandelbrot fractal on the GPU using PyOpenCL"""
     # Set the environment variable
-    os.environ['PYOPENCL_CTX'] = '0'
+    os.environ['PYOPENCL_CTX'] = PYOPENCL_CTX_VERSION
     
     # OpenCL kernel code
     # Similar to the CUDA kernel code, written in OpenCL C
