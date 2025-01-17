@@ -3,6 +3,9 @@ import time
 import os
 import sys
 
+# OpenCL context version, set to device
+PYOPENCL_CTX_VERSION = '1'
+
 def timing_decorator(func):
     def wrapper(*args, **kwargs):
         start_time = time.time()
@@ -47,7 +50,7 @@ def check_openCl():
     try:
         import pyopencl as cl
         suppress_output()
-        os.environ['PYOPENCL_CTX'] = '0'
+        os.environ['PYOPENCL_CTX'] = PYOPENCL_CTX_VERSION
         cl.create_some_context()
         enable_output()
         return True

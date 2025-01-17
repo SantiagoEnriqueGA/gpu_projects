@@ -9,6 +9,9 @@ from utils import timing_decorator, avg_timing_decorator
 from utils import suppress_output, enable_output
 from utils import check_numba_cuda, check_openCl
 
+# OpenCL context version, set to device
+PYOPENCL_CTX_VERSION = '1'
+
 # -------------------------------------------------------------------------------------------------
 # Functions to perform QuickSort
 # -------------------------------------------------------------------------------------------------
@@ -59,7 +62,7 @@ def _quicksort_numba(arr, low, high):
 def quicksort_opencl(arr):
     """Perform QuickSort on the GPU using PyOpenCL"""
     # Set the environment variable
-    os.environ['PYOPENCL_CTX'] = '0'
+    os.environ['PYOPENCL_CTX'] = PYOPENCL_CTX_VERSION
     
     # OpenCL kernel code
     kernel_code = """
@@ -87,7 +90,7 @@ def quicksort_opencl(arr):
     """
     
     # Initialize OpenCL
-    platform = cl.get_platforms()[0]
+    platform = cl.get_platforms()[int(PYOPENCL_CTX_VERSION)]
     device = platform.get_devices()[0]
     context = cl.Context([device])
     queue = cl.CommandQueue(context)
@@ -187,8 +190,6 @@ def main():
     plt.grid(True)
     plt.show()
     
-    
-        
 
 if __name__ == "__main__":
     main()
