@@ -1,3 +1,4 @@
+
 import time
 import os
 import sys
@@ -58,4 +59,14 @@ def check_openCl():
     except:
         enable_output()
         return False
-    
+
+def check_cupy():
+    try:
+        # suppress_output()
+        import cupy as cp
+        cp.cuda.Device(0)
+        # enable_output()
+        return True
+    except:
+        enable_output()
+        return False

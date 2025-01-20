@@ -1,6 +1,7 @@
 import numpy as np
 from numba import cuda
 import pyopencl as cl
+import cupy as cp
 import os
 
 from utils import timing_decorator, avg_timing_decorator
@@ -138,3 +139,66 @@ def create_fractal_opencl(min_x, max_x, min_y, max_y, image, iters):
     cl.enqueue_copy(queue, image, image_buf).wait()
     
     enable_output() # Restore the output __stdout__
+
+
+def create_fractal_cupy(min_x, max_x, min_y, max_y, image, iters):
+    """
+    Create a Mandelbrot fractal on the GPU using CuPy's RawKernel.
+    """
+    # CUDA kernel as a string
+    mandelbrot_kernel = cp.RawKernel(r"""
+    extern "C" __global__
+    void mandelbrot(
+        float min_x, float max_x, float min_y, float max_y,
+        unsigned char* image, int width, int height, int iters) {
+        
+        int x = blockIdx.x * blockDim.x + threadIdx.x;
+        int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+        if (x < width && y < height) {
+            float pixel_size_x = (max_x - min_x) / width;
+            float pixel_size_y = (max_y - min_y) / height;
+            float real = min_x + x * pixel_size_x;
+            float imag = min_y + y * pixel_size_y;
+            float c_real = real;
+            float c_imag = imag;
+            float z_real = 0.0;
+            float z_imag = 0.0;
+
+            int i;
+            for (i = 0; i < iters; i++) {
+                float z_real2 = z_real * z_real - z_imag * z_imag + c_real;
+                float z_imag2 = 2.0 * z_real * z_imag + c_imag;
+                z_real = z_real2;
+                z_imag = z_imag2;
+                if (z_real * z_real + z_imag * z_imag >= 4.0) {
+                    break;
+                }
+            }
+            image[y * width + x] = i;
+        }
+    }
+    """, "mandelbrot")
+
+    # Get the width and height of the image
+    width, height = image.shape[1], image.shape[0]
+
+    # Allocate memory on the GPU
+    d_image = cp.zeros((height, width), dtype=cp.uint8)
+
+    # Define the block and grid sizes
+    threads_per_block = (16, 16)
+    blocks_per_grid = (
+        (width + threads_per_block[0] - 1) // threads_per_block[0],
+        (height + threads_per_block[1] - 1) // threads_per_block[1],
+    )
+
+    # Launch the kernel
+    mandelbrot_kernel(
+        blocks_per_grid, threads_per_block,
+        (cp.float32(min_x), cp.float32(max_x), cp.float32(min_y), cp.float32(max_y),
+         d_image, cp.int32(width), cp.int32(height), cp.int32(iters))
+    )
+
+    # Copy the result back to the host
+    np.copyto(image, d_image.get())  # Use d_image.get() to transfer the data to NumPy

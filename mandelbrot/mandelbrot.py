@@ -89,12 +89,36 @@ def run_gpu_opencl(size_multi=2, max_iters=50, show=True, save=False):
     return image
 
 
+def run_gpu_cupy(size_multi, max_iters, show=False, save=False):
+    width = 750 * size_multi
+    height = 500 * size_multi
+    
+    image = np.zeros((height, width), dtype=np.uint8)
+    
+    start_time = time.time()
+    create_fractal_cupy(-2.0, 1.0, -1.0, 1.0, image, max_iters)
+    end_time = time.time()
+    execution_time = end_time - start_time
+
+    print(f"Execution time for {max_iters} iterations is {execution_time:.4f} seconds")
+    
+    if show or save:
+        plt.imshow(image)
+        plt.title(f"Mandelbrot Set (GPU with CuPy, iters={max_iters})")
+        plt.show()
+    if show:
+        plt.show()
+    if save:
+        plt.imsave(f"mandelbrot/plots/cupy_mandelbrot_size{size_multi}_iters{max_iters}.png", image, dpi=3000)
+    return image
+
+
 def main():
     # Parameters
     SIZE_MULTI = 2
     MAX_ITERS = 50
-    SHOW_IMAGE = True
-    SAVE_IMAGE = False
+    SHOW_IMAGE = False
+    SAVE_IMAGE = True
     CPU = True
     
     print(f"Creating Mandelbrot Set of size {750*SIZE_MULTI}x{500*SIZE_MULTI} with {MAX_ITERS} iterations")
@@ -104,9 +128,9 @@ def main():
     
     # Runs single and shows the Mandelbrot fractal 
     #--------------------------------------------------------------------------------------------
-    if CPU:
-        print("\nRunning CPU version...")
-        run_cpu(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
+    # if CPU:
+    #     print("\nRunning CPU version...")
+    #     run_cpu(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
         
     # Check for CUDA-enabled GPU
     if check_numba_cuda():
@@ -122,6 +146,12 @@ def main():
     else:
         print("\n--OpenCL-enabled GPU not available!")
     
+    # Check for CuPy-enabled GPU
+    if check_cupy():
+        print("\nRunning GPU CuPy version...")  # Requires a CuPy-enabled GPU
+        run_gpu_cupy(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
+    else:
+        print("\n--CuPy-enabled GPU not available!")
 
 if __name__ == "__main__":
     main()

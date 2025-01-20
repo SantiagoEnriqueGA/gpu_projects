@@ -44,6 +44,13 @@ def run_gpu_opencl_avg(size_multi=2, max_iters=50):
     image = np.zeros((height, width), dtype=np.uint8)
     create_fractal_opencl(-2.0, 1.0, -1.0, 1.0, image, max_iters)
 
+@avg_timing_decorator
+def run_gpu_cupy_avg(size_multi=2, max_iters=50):
+    """Run the Mandelbrot fractal on the GPU using CuPy and calculate the average execution time."""
+    width = 750 * size_multi
+    height = 500 * size_multi
+    image = np.zeros((height, width), dtype=np.uint8)
+    create_fractal_cupy(-2.0, 1.0, -1.0, 1.0, image, max_iters)
 
 def main():
     # Parameters
@@ -74,6 +81,13 @@ def main():
         run_gpu_opencl_avg(size_multi=SIZE_MULTI, max_iters=MAX_ITERS)
     else:
         print("\n--OpenCl-enabled GPU not available!")
+
+    # Check for CuPy-enabled GPU
+    if check_cupy():
+        print("\nRunning GPU CuPy version (average timing)...") # Requires a CuPy-enabled GPU
+        run_gpu_cupy_avg(size_multi=SIZE_MULTI, max_iters=MAX_ITERS)
+    else:
+        print("\n--CuPy-enabled GPU not available!")
 
 
 if __name__ == "__main__":
