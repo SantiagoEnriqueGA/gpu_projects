@@ -3,3 +3,6 @@ __pycache__/
 
 # mp4
 *.mp4
+
+# Mandelbrot fractal plots
+mandelbrot/plots/
