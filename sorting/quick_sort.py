@@ -5,19 +5,18 @@ import matplotlib.pyplot as plt
 import pyopencl as cl
 import os
 
-from utils import timing_decorator, avg_timing_decorator
-from utils import suppress_output, enable_output
-from utils import check_numba_cuda, check_openCl
+from utils import *
 
 # OpenCL context version, set to device
 PYOPENCL_CTX_VERSION = '1'
 
+@timing_decorator
+def sort_numpy(arr):
+    """Sort an array using NumPy. This is the baseline implementation."""
+    return np.sort(arr)
 # -------------------------------------------------------------------------------------------------
 # Functions to perform QuickSort
 # -------------------------------------------------------------------------------------------------
-@timing_decorator
-def sort_numpy(arr):
-    return np.sort(arr)
 
 @timing_decorator
 def quicksort_cpu(arr):
@@ -36,6 +35,7 @@ def quicksort_cpu(arr):
 @timing_decorator
 @jit(nopython=True)
 def quicksort_numba(arr):
+    """Perform QuickSort on the CPU using Numba Vectorized Functions."""
     _quicksort_numba(arr, 0, len(arr) - 1)
     return list(arr)
 
@@ -189,7 +189,29 @@ def main():
     plt.legend()
     plt.grid(True)
     plt.show()
+    # plt.savefig(f"sorting/quick_sort_comparison.png")
     
 
 if __name__ == "__main__":
     main()
+
+
+# OUTPUT:
+# Sorting array of size 1,000,000 elements.
+# ------------------------------------------------------------
+
+# Running CPU version...
+# Execution time for quicksort_cpu is 4.5068 seconds
+# First 10 elements CPU: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]
+
+# Running NumPy version...
+# Execution time for sort_numpy is 0.0530 seconds
+# First 10 elements NumPy: [ 0  1  2  3  4  9 12 13 13 15]
+
+# Running Numba version...
+# Execution time for quicksort_numba is 1.3538 seconds
+# First 10 elements Numba: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]
+
+# Running GPU OpenCL version...
+# Execution time for quicksort_opencl is 4.9662 seconds
+# First 10 elements OpenCL: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]

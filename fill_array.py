@@ -1,6 +1,6 @@
 import numpy as np
 from numba import jit, cuda
-from utils import timing_decorator, avg_timing_decorator
+from utils import *
 
 @avg_timing_decorator
 def fill_array(a, n):
