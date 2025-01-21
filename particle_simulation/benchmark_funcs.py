@@ -5,6 +5,7 @@ import numpy as np
 from sim import *
 from cuda_compute_forces import compute_forces_cudaKernel 
 from cuda_handle_particle_collisions import handle_particle_collisions_cudaKernel
+from cuda_handle_boundary_collisions import handle_boundary_collisions_cudaKernel
 
 # Constants
 NUM_PARTICLES = 5000  # Number of particles
@@ -99,6 +100,10 @@ print(f"Speedup:                                                {speedup:.2f}x")
 print("")
 boundary_time, boundary_std = benchmark_function(handle_boundary_collisions, positions_cp, velocities_cp, repeats=N_RUNS)
 print(f"handle_boundary_collisions average time:                {boundary_time:.5f} seconds", f"(std_dev: {boundary_std:.5f} seconds)")
+
+cuda_boundary_time, cuda_boundary_std = benchmark_function(handle_boundary_collisions_cudaKernel, positions_cp, velocities_cp, SPACE_SIZE, ELASTICITY, repeats=N_RUNS)
+print(f"handle_boundary_collisions_cudaKernel average time:     {cuda_boundary_time:.5f} seconds", f"(std_dev: {cuda_boundary_std:.5f} seconds)")
+
 
 
 # OUTPUT:

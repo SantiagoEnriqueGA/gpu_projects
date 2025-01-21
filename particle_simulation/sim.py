@@ -9,18 +9,19 @@ from datetime import datetime
 # CUDA kernels
 from cuda_compute_forces import compute_forces_cudaKernel 
 from cuda_handle_particle_collisions import handle_particle_collisions_cudaKernel
+from cuda_handle_boundary_collisions import handle_boundary_collisions_cudaKernel
 
 # Constants
-SIM_LENGTH = 180        # Simulation length in seconds
 FPS = 60                # Frames per second
-NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
-
 NUM_PARTICLES = 2000  # Number of particles
 SPACE_SIZE = 200.0    # Size of the simulation space
 DT = 0.025            # Time step
 G = 0.0               # Gravitational constant
 ELASTICITY = 0.75     # Collision elasticity coefficient
 PARTICLE_RADIUS = 0.5  # Radius of particles for collision detection
+
+SIM_LENGTH = 60*3        # Simulation length in seconds
+NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
 
 # Create timestamped output filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -31,15 +32,20 @@ positions = cp.random.uniform(0, SPACE_SIZE, size=(NUM_PARTICLES, 2))
 velocities = cp.random.uniform(-1, 1, size=(NUM_PARTICLES, 2))
 masses = cp.random.uniform(1, 10, size=(NUM_PARTICLES, 1))
 
-# Function to handle boundary collisions
-def handle_boundary_collisions(positions, velocities):
-    """Handle boundary collisions, bouncing particles off the walls."""
-    for i in range(2):
-        out_of_bounds_low = positions[:, i] < 0
-        out_of_bounds_high = positions[:, i] > SPACE_SIZE
-        velocities[out_of_bounds_low | out_of_bounds_high, i] *= -ELASTICITY
-        positions[out_of_bounds_low, i] = 0
-        positions[out_of_bounds_high, i] = SPACE_SIZE
+# Initialize particle positions, velocities, and masses with pinned memory
+positions = cp.asarray(cp.random.uniform(0, SPACE_SIZE, size=(NUM_PARTICLES, 2)))
+positions = cp.array(positions, order='C')  # Ensure C-contiguous memory
+velocities = cp.array(cp.random.uniform(-1, 1, size=(NUM_PARTICLES, 2)), order='C')
+masses = cp.array(cp.random.uniform(1, 10, size=(NUM_PARTICLES, 1)), order='C')
+
+# Pre-allocate arrays for visualization
+positions_host = np.empty((NUM_PARTICLES, 2), dtype=np.float64)
+velocities_host = np.empty((NUM_PARTICLES, 2), dtype=np.float64)
+velocity_magnitudes_host = np.empty(NUM_PARTICLES, dtype=np.float64)
+
+# Create CUDA streams for concurrent execution
+stream1 = cp.cuda.Stream()
+stream2 = cp.cuda.Stream()
 
 def main():
     # Set up the plot
@@ -64,32 +70,37 @@ def main():
     def update(step):
         global positions, velocities
         
-        # Update particle positions and velocities
-        forces = compute_forces_cudaKernel(positions, masses, G=G)
-
-        velocities += (forces / masses) * DT
-        positions += velocities * DT
+        # Use streams for concurrent execution of physics calculations
+        with stream1:
+            forces = compute_forces_cudaKernel(positions, masses, G=G)
+            velocities += (forces / masses) * DT
         
-        # Handle collisions
-        positions, velocities = handle_particle_collisions_cudaKernel(
-            positions, velocities, masses, 
-            particle_radius=PARTICLE_RADIUS, 
-            elasticity=ELASTICITY
-        )
-        handle_boundary_collisions(positions, velocities)
+        with stream2:
+            positions += velocities * DT
+            positions, velocities = handle_particle_collisions_cudaKernel(
+                positions, velocities, masses, 
+                particle_radius=PARTICLE_RADIUS, 
+                elasticity=ELASTICITY
+            )
+            positions, velocities = handle_boundary_collisions_cudaKernel(
+                positions, velocities, space_size=SPACE_SIZE, elasticity=ELASTICITY
+            )
         
-        # Calculate velocity magnitudes
-        velocity_magnitudes = cp.linalg.norm(velocities, axis=1)
+        # Synchronize streams before visualization
+        stream1.synchronize()
+        stream2.synchronize()
         
-        # Transfer data to CPU for plotting
-        positions_host = cp.asnumpy(positions)
-        velocity_magnitudes_host = cp.asnumpy(velocity_magnitudes)
+        # Transfer data to pre-allocated CPU arrays
+        cp.asnumpy(positions, out=positions_host)
+        cp.asnumpy(velocities, out=velocities_host)
         
-        # Update scatter plot
+        # Calculate velocity magnitudes on CPU
+        velocity_magnitudes_host[:] = np.linalg.norm(velocities_host, axis=1)
+        
+        # Update visualization
         scat.set_offsets(positions_host)
         scat.set_array(velocity_magnitudes_host)
         
-        # Update color normalization
         if step == 0:
             scat.set_clim(velocity_magnitudes_host.min(), velocity_magnitudes_host.max())
         
@@ -108,6 +119,23 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# # Profiling the simulation
+# if __name__ == "__main__":
+#     import cProfile
+#     import pstats
+
+#     profiler = cProfile.Profile()
+#     profiler.enable()
+    
+#     main()
+    
+#     profiler.disable()
+#     stats = pstats.Stats(profiler)
+#     stats.strip_dirs()
+#     stats.sort_stats('cumtime')  # Sort by cumulative time
+#     stats.print_stats(20)  # Print the top 20 results
+#     stats.dump_stats("particle_simulation/profile_results.prof")
 
 
 
@@ -249,3 +277,15 @@ def compute_forces_cp(positions, masses, G=1.0, epsilon=1e-5):
     total_forces = cp.sum(forces, axis=1)
     return total_forces
 
+
+# Function to handle boundary collisions
+# -------------------------------------------------------------------------------------------------
+def handle_boundary_collisions(positions, velocities):
+    """Handle boundary collisions, bouncing particles off the walls."""
+    for i in range(2):
+        out_of_bounds_low = positions[:, i] < 0
+        out_of_bounds_high = positions[:, i] > SPACE_SIZE
+        velocities[out_of_bounds_low | out_of_bounds_high, i] *= -ELASTICITY
+        positions[out_of_bounds_low, i] = 0
+        positions[out_of_bounds_high, i] = SPACE_SIZE
+    return positions, velocities

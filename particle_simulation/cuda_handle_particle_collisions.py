@@ -8,9 +8,11 @@ extern "C" __global__ void handle_collisions_kernel(
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx >= N) return;
 
-    __shared__ double shared_positions[256 * 2];
-    __shared__ double shared_velocities[256 * 2];
+    // Shared memory for particle positions and velocities
+    __shared__ double shared_positions[256 * 2]; // Assuming 2D positions
+    __shared__ double shared_velocities[256 * 2]; // Assuming 2D velocities
     
+    // Load current particle data
     double pos_i[2], vel_i[2], mass_i;
     pos_i[0] = positions[idx * 2];
     pos_i[1] = positions[idx * 2 + 1];
@@ -19,6 +21,7 @@ extern "C" __global__ void handle_collisions_kernel(
     mass_i = masses[idx];
 
     for (int tile = 0; tile < (N + blockDim.x - 1) / blockDim.x; ++tile) {
+        // Load shared memory for current tile
         int tile_idx = tile * blockDim.x + threadIdx.x;
         if (tile_idx < N) {
             shared_positions[threadIdx.x * 2] = positions[tile_idx * 2];
@@ -28,15 +31,17 @@ extern "C" __global__ void handle_collisions_kernel(
         }
         __syncthreads();
 
+        // Process potential collisions within this tile
         for (int j = 0; j < blockDim.x; ++j) {
             int other_idx = tile * blockDim.x + j;
             if (other_idx >= N || idx == other_idx) continue;
 
+            // Calculate delta position and distance
             double delta_x = pos_i[0] - shared_positions[j * 2];
             double delta_y = pos_i[1] - shared_positions[j * 2 + 1];
-            double epsilon = 1e-8;
-            double distance = sqrt(delta_x * delta_x + delta_y * delta_y + epsilon);
+            double distance = sqrt(delta_x * delta_x + delta_y * delta_y);
 
+            // Check for collision
             if (distance < 2 * particle_radius && distance > 0) {
                 double normal_x = delta_x / distance;
                 double normal_y = delta_y / distance;
@@ -47,23 +52,40 @@ extern "C" __global__ void handle_collisions_kernel(
                 double vel_normal = rel_vel_x * normal_x + rel_vel_y * normal_y;
 
                 if (vel_normal < 0) {
+                    double overlap = max(2 * particle_radius - distance, 0.0);
+                    double max_overlap_correction = 0.1 * particle_radius;
+                    overlap = min(overlap, max_overlap_correction);
+
                     double factor_i = (2 * masses[other_idx]) / (mass_i + masses[other_idx]) * vel_normal;
                     double factor_j = (2 * mass_i) / (mass_i + masses[other_idx]) * vel_normal;
+
+                    // Cap velocity changes
+                    double max_velocity_change = 5;
+                    double velocity_change = sqrt(factor_i * factor_i);
+                    if (velocity_change > max_velocity_change) {
+                        double scale = max_velocity_change / velocity_change;
+                        factor_i *= scale;
+                        factor_j *= scale;
+                    }
 
                     vel_i[0] -= factor_i * normal_x;
                     vel_i[1] -= factor_i * normal_y;
                     shared_velocities[j * 2] += factor_j * normal_x;
                     shared_velocities[j * 2 + 1] += factor_j * normal_y;
+
+                    vel_i[0] = elasticity * vel_i[0] + (1 - elasticity) * vel_i[0];
+                    vel_i[1] = elasticity * vel_i[1] + (1 - elasticity) * vel_i[1];
                 }
             }
+
         }
         __syncthreads();
     }
 
+    // Write back updated velocity
     velocities[idx * 2] = vel_i[0];
     velocities[idx * 2 + 1] = vel_i[1];
 }
-
 '''
 
 # Compile the CUDA kernel
