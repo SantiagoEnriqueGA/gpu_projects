@@ -128,9 +128,9 @@ def main():
     
     # Runs single and shows the Mandelbrot fractal 
     #--------------------------------------------------------------------------------------------
-    # if CPU:
-    #     print("\nRunning CPU version...")
-    #     run_cpu(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
+    if CPU:
+        print("\nRunning CPU version...")
+        run_cpu(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
         
     # Check for CUDA-enabled GPU
     if check_numba_cuda():

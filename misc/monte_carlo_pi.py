@@ -86,6 +86,7 @@ def main():
     plt.legend()
     plt.grid(True)
     plt.show()
+    # plt.savefig("misc/monte_carlo_pi.png")
 
         
 if __name__ == "__main__":
