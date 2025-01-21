@@ -20,7 +20,8 @@ G = 0.0               # Gravitational constant
 ELASTICITY = 0.75     # Collision elasticity coefficient
 PARTICLE_RADIUS = 0.5  # Radius of particles for collision detection
 
-SIM_LENGTH = 60*3        # Simulation length in seconds
+# SIM_LENGTH = 60*3        # Simulation length in seconds
+SIM_LENGTH = 10        # Simulation length in seconds
 NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
 
 # Create timestamped output filename
@@ -117,25 +118,25 @@ def main():
 
     print(f"Simulation saved as {OUTPUT_FILE}")
 
-if __name__ == "__main__":
-    main()
-
-# # Profiling the simulation
 # if __name__ == "__main__":
-#     import cProfile
-#     import pstats
-
-#     profiler = cProfile.Profile()
-#     profiler.enable()
-    
 #     main()
+
+# Profiling the simulation
+if __name__ == "__main__":
+    import cProfile
+    import pstats
+
+    profiler = cProfile.Profile()
+    profiler.enable()
     
-#     profiler.disable()
-#     stats = pstats.Stats(profiler)
-#     stats.strip_dirs()
-#     stats.sort_stats('cumtime')  # Sort by cumulative time
-#     stats.print_stats(20)  # Print the top 20 results
-#     stats.dump_stats("particle_simulation/profile_results.prof")
+    main()
+    
+    profiler.disable()
+    stats = pstats.Stats(profiler)
+    stats.strip_dirs()
+    stats.sort_stats('cumtime')  # Sort by cumulative time
+    stats.print_stats(20)  # Print the top 20 results
+    stats.dump_stats("particle_simulation/prof/profile_results.prof")
 
 
 
