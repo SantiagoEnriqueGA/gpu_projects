@@ -1,5 +1,6 @@
 import time
 import numpy as np
+import cupy as cp
 from numba import jit
 import matplotlib.pyplot as plt
 import pyopencl as cl
@@ -13,7 +14,8 @@ PYOPENCL_CTX_VERSION = '1'
 @timing_decorator
 def sort_numpy(arr):
     """Sort an array using NumPy. This is the baseline implementation."""
-    return np.sort(arr)
+    return np.sort(arr, kind="quicksort")
+
 # -------------------------------------------------------------------------------------------------
 # Functions to perform QuickSort
 # -------------------------------------------------------------------------------------------------
@@ -115,81 +117,81 @@ def main():
     SIZE = 1_000_000
     
     arr = np.random.randint(0, 1_000_000, SIZE).astype(np.int32)
+    arr_cp = cp.asarray(arr)
     
     print(f"Sorting array of size {SIZE:,} elements.")
     print("-"*60)
     
     # Runs single and shows the sorted array
     #--------------------------------------------------------------------------------------------
-    print("\nRunning CPU version...")
-    sorted_cpu = quicksort_cpu(arr.copy())
-    print(f"First 10 elements CPU: {sorted_cpu[:10]}")
-    
-    print("\nRunning NumPy version...")
     sorted_numpy = sort_numpy(arr.copy())
-    print(f"First 10 elements NumPy: {sorted_numpy[:10]}")
     
-    print("\nRunning Numba version...")
+    sorted_cpu = quicksort_cpu(arr.copy())
+    
     sorted_numba = quicksort_numba(arr.copy())
-    print(f"First 10 elements Numba: {sorted_numba[:10]}")
     
     # Check for OpenCL-enabled GPU
     if check_openCl():
-        print("\nRunning GPU OpenCL version...")
         sorted_openCl = quicksort_opencl(arr.copy())
-        print(f"First 10 elements OpenCL: {sorted_openCl[:10]}")
     else:
         print("\n--OpenCL-enabled GPU not available!")
     
+
+    assert np.allclose(sorted_numpy, sorted_cpu)
+    assert np.allclose(sorted_numpy, sorted_numba)
+    if check_openCl():
+        assert np.allclose(sorted_numpy, sorted_openCl)
+    print(f"All elements of the result are equal!")
+
     
-    # Plot a performance comparison 
-    # --------------------------------------------------------------------------------------------
-    arr_sizes = [1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 5_000_000, 10_000_000]
-    cpu_times = []; numba_times = []; opencl_times = []; numpy_times = []
-    for size in arr_sizes:
-        arr = np.random.randint(0, 1_000_000, size).astype(np.int32)
+    # # Plot a performance comparison 
+    # # --------------------------------------------------------------------------------------------
+    # arr_sizes = [1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000, 5_000_000, 10_000_000]
+    # cpu_times = []; numba_times = []; opencl_times = []; numpy_times = []
+    # for size in arr_sizes:
+    #     arr = np.random.randint(0, 1_000_000, size).astype(np.int32)
         
-        print(f"\nSorting array of size {size:,} elements.")
+    #     print(f"\nSorting array of size {size:,} elements.")
         
-        # CPU
-        start = time.time()
-        quicksort_cpu(arr.copy())
-        cpu_times.append(time.time() - start)
+    #     # CPU
+    #     start = time.time()
+    #     quicksort_cpu(arr.copy())
+    #     cpu_times.append(time.time() - start)
         
-        # NumPy
-        start = time.time()
-        sort_numpy(arr.copy())
-        numpy_times.append(time.time() - start)
+    #     # NumPy
+    #     start = time.time()
+    #     sort_numpy(arr.copy())
+    #     numpy_times.append(time.time() - start)
         
-        # Numba
-        start = time.time()
-        quicksort_numba(arr.copy())
-        numba_times.append(time.time() - start)
+    #     # Numba
+    #     start = time.time()
+    #     quicksort_numba(arr.copy())
+    #     numba_times.append(time.time() - start)
         
-        # OpenCL
-        if check_openCl():
-            start = time.time()
-            quicksort_opencl(arr.copy())
-            opencl_times.append(time.time() - start)
-        else:
-            opencl_times.append(None)
+    #     # OpenCL
+    #     if check_openCl():
+    #         start = time.time()
+    #         quicksort_opencl(arr.copy())
+    #         opencl_times.append(time.time() - start)
+    #     else:
+    #         opencl_times.append(None)
             
-    # Plot the results
-    plt.figure(figsize=(10, 6))
-    plt.plot(arr_sizes, cpu_times, label="CPU")
-    plt.plot(arr_sizes, numba_times, label="Numba")
-    if opencl_times:
-        plt.plot(arr_sizes, opencl_times, label="OpenCL")
-    plt.plot(arr_sizes, numpy_times, label="NumPy")
-    # plt.xscale("log")
-    plt.yscale("log")
-    plt.xlabel("Array size")
-    plt.ylabel("Time (s)")
-    plt.title("QuickSort Performance Comparison")
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-    # plt.savefig(f"sorting/quick_sort_comparison.png")
+    # # Plot the results
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(arr_sizes, cpu_times, label="CPU")
+    # plt.plot(arr_sizes, numba_times, label="Numba")
+    # if opencl_times:
+    #     plt.plot(arr_sizes, opencl_times, label="OpenCL")
+    # plt.plot(arr_sizes, numpy_times, label="NumPy")
+    # # plt.xscale("log")
+    # plt.yscale("log")
+    # plt.xlabel("Array size")
+    # plt.ylabel("Time (s)")
+    # plt.title("QuickSort Performance Comparison")
+    # plt.legend()
+    # plt.grid(True)
+    # plt.show()
+    # # plt.savefig(f"sorting/quick_sort_comparison.png")
     
 
 if __name__ == "__main__":
@@ -199,19 +201,8 @@ if __name__ == "__main__":
 # OUTPUT:
 # Sorting array of size 1,000,000 elements.
 # ------------------------------------------------------------
-
-# Running CPU version...
-# Execution time for quicksort_cpu is 4.5068 seconds
-# First 10 elements CPU: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]
-
-# Running NumPy version...
-# Execution time for sort_numpy is 0.0530 seconds
-# First 10 elements NumPy: [ 0  1  2  3  4  9 12 13 13 15]
-
-# Running Numba version...
-# Execution time for quicksort_numba is 1.3538 seconds
-# First 10 elements Numba: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]
-
-# Running GPU OpenCL version...
-# Execution time for quicksort_opencl is 4.9662 seconds
-# First 10 elements OpenCL: [0, 1, 2, 3, 4, 9, 12, 13, 13, 15]
+# Execution time for sort_numpy is 0.0550 seconds
+# Execution time for quicksort_cpu is 4.9470 seconds
+# Execution time for quicksort_numba is 1.3436 seconds
+# Execution time for quicksort_opencl is 5.1661 seconds
+# All elements of the result are equal!

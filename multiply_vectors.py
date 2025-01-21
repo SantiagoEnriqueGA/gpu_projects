@@ -16,25 +16,25 @@ def multiplyVectorsNumba(v1, v2):
 def main():
     # Parameters
     N = 640_000_000
+    
+    print(f"Multiplying two {N:,} element vectors.")
 
     # Initialize two vectors of random floats
     v1 = np.random.rand(N).astype(np.float32)
     v2 = np.random.rand(N).astype(np.float32)
     
     v3 = multiplyVectors(v1, v2)
-    print(f"Last 5 elements of the result: {v3[-5:]}")
-    print("")
-    v3 = multiplyVectorsNumba(v1, v2)
-    print(f"Last 5 elements of the result: {v3[-5:]}")
+    v3_numba = multiplyVectorsNumba(v1, v2)
 
+    assert np.allclose(v3, v3_numba)
+    print(f"All elements of the result are equal!")
         
 if __name__ == "__main__":
     main()
 
 
 # OUTPUT:
-# Average execution time for multiplyVectors is 0.9624 seconds
-# Last 5 elements of the result: [0.05277812 0.3918012  0.18786642 0.40295723 0.5274713 ]
-
-# Average execution time for multiplyVectorsNumba is 3.0426 seconds
-# Last 5 elements of the result: [0.05277812 0.3918012  0.18786642 0.40295723 0.5274713 ]
+# Multiplying two 640,000,000 element vectors.
+# Average execution time for multiplyVectors is 0.8778 seconds
+# Average execution time for multiplyVectorsNumba is 1.3942 seconds
+# All elements of the result are equal!

@@ -99,3 +99,25 @@ print(f"Speedup:                                                {speedup:.2f}x")
 print("")
 boundary_time, boundary_std = benchmark_function(handle_boundary_collisions, positions_cp, velocities_cp, repeats=N_RUNS)
 print(f"handle_boundary_collisions average time:                {boundary_time:.5f} seconds", f"(std_dev: {boundary_std:.5f} seconds)")
+
+
+# OUTPUT:
+# Benchmarking 5,000 particles in a 200.00 x 200.00 space with 10 runs each.
+# ----------------------------------------------------------------------------------------------------
+
+# Benchmarking gravitational force computations...
+# compute_forces_np average time:                         5.88466 seconds (std_dev: 0.03347 seconds)
+# compute_forces_cp average time:                         5.87210 seconds (std_dev: 0.00031 seconds)
+# compute_forces_cudaKernel average time:                 0.20220 seconds (std_dev: 0.00627 seconds)  
+# ----------------------------------------------------------------------------------------------------
+# Speedup:                                                29.10x
+
+# Benchmarking particle-particle collision handling...
+# handle_particle_collisions_np average time:             2.72606 seconds (std_dev: 0.71278 seconds)
+# handle_particle_collisions_cp average time:             2.79370 seconds (std_dev: 0.24098 seconds)
+# handle_particle_collisions_cKDTree average time:        0.32150 seconds (std_dev: 0.00852 seconds)
+# handle_particle_collisions_cudaKernel average time:     0.04330 seconds (std_dev: 0.01899 seconds)  
+# ----------------------------------------------------------------------------------------------------
+# Speedup:                                                64.52x
+
+# handle_boundary_collisions average time:                0.01015 seconds (std_dev: 0.02645 seconds)

@@ -72,3 +72,25 @@ assert np.allclose(np_collisions[0], cKDTree_collisions[0], rtol=1e-5, atol=1e-5
 assert np.allclose(np_collisions[0], cuda_collisions[0], rtol=1e-5, atol=1e-5)
 print("-"*80)
 print("Passed! all collisions and velocities are equal.")
+
+
+# OUTPUT:
+# Comparing gravitational force computations...
+#    First elements of np_total_forces:   [[ -0.08247896 -16.43854861]]
+#    First elements of cp_total_forces:   [[ -0.08247896 -16.43854861]]
+#    First elements of cuda_total_forces: [[ -0.08247896 -16.43854861]]
+# --------------------------------------------------------------------------------
+# Passed! all forces are equal.
+
+# Comparing particle-particle collision handling...
+#    First elements of np_collisions (positions):      [[97.55379889 88.26877469]]
+#    First elements of cp_collisions (positions):      [[97.55379889 88.26877469]]
+#    First elements of cKDTree_collisions (positions): [[97.55379889 88.26877469]]
+#    First elements of cuda_collisions (positions):    [[97.55379889 88.26877469]]
+
+#    First elements of np_collisions (velocities):      [[0.23632976 0.80954981]] 
+#    First elements of cp_collisions (velocities):      [[0.23632976 0.80954981]] 
+#    First elements of cKDTree_collisions (velocities): [[0.23632976 0.80954981]] 
+#    First elements of cuda_collisions (velocities):    [[0.23632976 0.80954981]] 
+# --------------------------------------------------------------------------------
+# Passed! all collisions and velocities are equal.
