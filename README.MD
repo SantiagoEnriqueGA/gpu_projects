@@ -28,7 +28,7 @@ This folder contains scripts for generating Mandelbrot fractals using different 
 This folder contains scripts for simulating particle interactions using CUDA and other techniques.
 - Main scripts:
     - `sim.py`: Main script to run the particle simulation and visualize the results. Saves the results to a file for later visualization.
-    - `sim_sdl2.py`: Script to run the particle simulation with SDL2 visualization. Visualizes the simulation in real-time.
+    - `sim_imageio.py`: Script to run the particle simulation with imageio visualization. Visualizes the simulation in real-time.
 - CUDA kernels:
     - `cuda_compute_forces.py`: CUDA kernel for computing gravitational forces.
     - `cuda_handle_boundary_collisions.py`: CUDA kernel for handling boundary collisions.
@@ -36,7 +36,9 @@ This folder contains scripts for simulating particle interactions using CUDA and
 - Utility scripts:
     - `compare_funcs.py`: Script to compare the results of different particle simulation functions. Ensures consistency across implementations.
     - `benchmark_funcs.py`: Script to benchmark the performance of various particle simulation functions.
-- `profile_results.prof`: Profiling results for the particle simulation.
+- Profiling Results:
+    - `profile_results.prof`: Profiling results for the particle simulation.
+    - `profile_results_imageio.prof`: Profiling results for the particle simulation with live visualization.
 
 ### `sorting/`
 This folder contains scripts for sorting algorithms and related utilities.
@@ -76,7 +78,7 @@ This project focuses on simulating particle interactions using CUDA and other te
 
 ### Main Scripts
 `sim.py`: Run the particle simulation and visualize the results. Each frame of the simulation is saved with matplotlib's FFmpeg writer for visualization.  
-`sim_sdl2.py`: Run the particle simulation with SDL2 visualization. The simulation is visualized in real-time using the PySDL2 library.
+`sim_imageio.py`: Run the particle simulation with live visualization. The simulation is visualized in real-time using the ImageIO library for video writing.
 
 **The following are the high level steps of the simulation:**
 1. Set constants for the simulation (number of particles, simulation space size, etc.).
