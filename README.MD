@@ -73,6 +73,12 @@ The script `benchmark_mandelbrot.py` benchmarks the performance of Mandelbrot fr
 
 The script `utils.py` contains utility functions for timing and checking the availability of computational libraries.
 
+### Example Image
+Here is an example of the Mandelbrot fractal generated using SIZE_MULTI=2 and MAX_ITERS=50:
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png)
+
+To see a larger image, run with SIZE_MULTI=50 and MAX_ITERS=100 (37500x25000 pixels), download the image [here](https://github.com/SantiagoEnriqueGA/gpu_projects/blob/main/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png).
+
 ## Particle Simulation
 This project focuses on simulating particle interactions using CUDA and other techniques. The simulation involves particles initialized with random positions, velocities, and masses, interacting through gravitational forces and colliding with each other and the boundaries of the simulation space. The particles are colored based on their velocity to visualize their movement. Particle positions, velocities, and masses are all calculated as float64 arrays for high precision.
 
