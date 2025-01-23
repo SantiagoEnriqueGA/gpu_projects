@@ -24,8 +24,9 @@ def run_cpu(size_multi=2, max_iters=50, show=True, save=False):
     print(f"Execution time for create_fractal is {execution_time:.3f} seconds")
     
     if show or save:
-        plt.imshow(image)
+        plt.imshow(image, cmap='seismic')
         plt.title(f"Mandelbrot Set (CPU, iters={max_iters})")
+        plt.tight_layout()
     if show:
         plt.show()
     if save:
@@ -56,8 +57,9 @@ def run_gpu_cuda(size_multi=2, max_iters=50, show=True, save=False):
     image = d_image.copy_to_host()
 
     if show or save:
-        plt.imshow(image)
+        plt.imshow(image, cmap='seismic')
         plt.title(f"Mandelbrot Set (GPU, iters={max_iters})")
+        plt.tight_layout()
     if show:
         plt.show()
     if save:
@@ -80,8 +82,9 @@ def run_gpu_opencl(size_multi=2, max_iters=50, show=True, save=False):
     print(f"Execution time for create_fractal_opencl is {execution_time:.4f} seconds")
     
     if show or save:
-        plt.imshow(image)
+        plt.imshow(image, cmap='seismic')
         plt.title(f"Mandelbrot Set (GPU with PyOpenCL, iters={max_iters})")
+        plt.tight_layout()
     if show:
         plt.show()
     if save:
@@ -89,7 +92,7 @@ def run_gpu_opencl(size_multi=2, max_iters=50, show=True, save=False):
     return image
 
 
-def run_gpu_cupy(size_multi, max_iters, show=False, save=False):
+def run_gpu_cupy(size_multi, max_iters, show=True, save=False):
     width = 750 * size_multi
     height = 500 * size_multi
     
@@ -103,9 +106,9 @@ def run_gpu_cupy(size_multi, max_iters, show=False, save=False):
     print(f"Execution time for {max_iters} iterations is {execution_time:.4f} seconds")
     
     if show or save:
-        plt.imshow(image)
+        plt.imshow(image, cmap='seismic')
         plt.title(f"Mandelbrot Set (GPU with CuPy, iters={max_iters})")
-        plt.show()
+        plt.tight_layout()
     if show:
         plt.show()
     if save:
@@ -117,7 +120,7 @@ def main():
     # Parameters
     SIZE_MULTI = 2
     MAX_ITERS = 50
-    SHOW_IMAGE = False
+    SHOW_IMAGE = True
     SAVE_IMAGE = True
     CPU = True
     
@@ -134,7 +137,7 @@ def main():
         
     # Check for CUDA-enabled GPU
     if check_numba_cuda():
-        print("\nRunning GPU CUDA version...")    # Requires a CUDA-enabled GPU
+        print("\nRunning GPU Numba CUDA version...")    # Requires a CUDA-enabled GPU
         run_gpu_cuda(size_multi=SIZE_MULTI, max_iters=MAX_ITERS, show=SHOW_IMAGE, save=SAVE_IMAGE)
     else:
         print("\n--CUDA-enabled GPU not available!")
