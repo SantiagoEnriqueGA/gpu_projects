@@ -21,17 +21,12 @@ ELASTICITY = 0.75     # Collision elasticity coefficient
 PARTICLE_RADIUS = 0.5  # Radius of particles for collision detection
 
 # SIM_LENGTH = 60*3        # Simulation length in seconds
-SIM_LENGTH = 10        # Simulation length in seconds
+SIM_LENGTH = 5        # Simulation length in seconds (for testing)
 NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
 
 # Create timestamped output filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 OUTPUT_FILE = f"particle_simulation/vids/particle_simulation_{timestamp}.mp4"
-
-# Initialize particle positions, velocities, and masses
-positions = cp.random.uniform(0, SPACE_SIZE, size=(NUM_PARTICLES, 2))
-velocities = cp.random.uniform(-1, 1, size=(NUM_PARTICLES, 2))
-masses = cp.random.uniform(1, 10, size=(NUM_PARTICLES, 1))
 
 # Initialize particle positions, velocities, and masses with pinned memory
 positions = cp.asarray(cp.random.uniform(0, SPACE_SIZE, size=(NUM_PARTICLES, 2)))
@@ -118,25 +113,25 @@ def main():
 
     print(f"Simulation saved as {OUTPUT_FILE}")
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 # Profiling the simulation
-if __name__ == "__main__":
-    import cProfile
-    import pstats
+# if __name__ == "__main__":
+#     import cProfile
+#     import pstats
 
-    profiler = cProfile.Profile()
-    profiler.enable()
+#     profiler = cProfile.Profile()
+#     profiler.enable()
     
-    main()
+#     main()
     
-    profiler.disable()
-    stats = pstats.Stats(profiler)
-    stats.strip_dirs()
-    stats.sort_stats('cumtime')  # Sort by cumulative time
-    stats.print_stats(20)  # Print the top 20 results
-    stats.dump_stats("particle_simulation/prof/profile_results.prof")
+#     profiler.disable()
+#     stats = pstats.Stats(profiler)
+#     stats.strip_dirs()
+#     stats.sort_stats('cumtime')  # Sort by cumulative time
+#     stats.print_stats(20)  # Print the top 20 results
+#     stats.dump_stats("particle_simulation/prof/profile_results.prof")
 
 
 
