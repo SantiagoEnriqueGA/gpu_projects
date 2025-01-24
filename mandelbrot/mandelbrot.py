@@ -53,8 +53,10 @@ def run_gpu_cuda(size_multi=2, max_iters=50, show=True, save=False):
     execution_time = end_time - start_time
     
     print(f"Execution time for create_fractal_numba is {execution_time:.4f} seconds")
+
     
     image = d_image.copy_to_host()
+    print(f"Unique pixels: {np.unique(image).shape[0]}")
 
     if show or save:
         plt.imshow(image, cmap='seismic')

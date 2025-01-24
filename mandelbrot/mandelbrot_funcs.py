@@ -113,7 +113,8 @@ def create_fractal_opencl(min_x, max_x, min_y, max_y, image, iters):
                     break;
                 }
             }
-            image[y * width + x] = i;
+            image[y * width + x] = (uchar)(255.0f * i / iters);
+
         }
     }
     """
@@ -175,7 +176,7 @@ def create_fractal_cupy(min_x, max_x, min_y, max_y, image, iters):
                     break;
                 }
             }
-            image[y * width + x] = i;
+            image[y * width + x] = (unsigned char)(255.0f * i / iters);
         }
     }
     """, "mandelbrot")
