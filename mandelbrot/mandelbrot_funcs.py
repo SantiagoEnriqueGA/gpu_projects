@@ -86,34 +86,34 @@ def create_fractal_opencl(min_x, max_x, min_y, max_y, image, iters):
     
     # OpenCL kernel code
     # Similar to the CUDA kernel code, written in OpenCL C
-    kernel_code = """
+    kernel_code = r"""
     __kernel void mandelbrot(
-        const float min_x, const float max_x, const float min_y, const float max_y,
+        const double min_x, const double max_x, const double min_y, const double max_y,
         __global uchar *image, const int width, const int height, const int iters) {
         
         int x = get_global_id(0);
         int y = get_global_id(1);
         
         if (x < width && y < height) {
-            float pixel_size_x = (max_x - min_x) / width;
-            float pixel_size_y = (max_y - min_y) / height;
-            float real = min_x + x * pixel_size_x;
-            float imag = min_y + y * pixel_size_y;
-            float c_real = real;
-            float c_imag = imag;
-            float z_real = 0.0;
-            float z_imag = 0.0;
+            double pixel_size_x = (max_x - min_x) / width;
+            double pixel_size_y = (max_y - min_y) / height;
+            double real = min_x + x * pixel_size_x;
+            double imag = min_y + y * pixel_size_y;
+            double c_real = real;
+            double c_imag = imag;
+            double z_real = 0.0;
+            double z_imag = 0.0;
             int i;
             for (i = 0; i < iters; i++) {
-                float z_real2 = z_real * z_real - z_imag * z_imag + c_real;
-                float z_imag2 = 2.0 * z_real * z_imag + c_imag;
+                double z_real2 = z_real * z_real - z_imag * z_imag + c_real;
+                double z_imag2 = 2.0 * z_real * z_imag + c_imag;
                 z_real = z_real2;
                 z_imag = z_imag2;
                 if (z_real * z_real + z_imag * z_imag >= 4.0) {
                     break;
                 }
             }
-            image[y * width + x] = (uchar)(255.0f * i / iters);
+            image[y * width + x] = (uchar)(255.0 * i / iters);
 
         }
     }
@@ -134,7 +134,10 @@ def create_fractal_opencl(min_x, max_x, min_y, max_y, image, iters):
 
     # Execute the kernel
     width, height = image.shape[1], image.shape[0]
-    program.mandelbrot(queue, (width, height), None, np.float32(min_x), np.float32(max_x), np.float32(min_y), np.float32(max_y), image_buf, np.int32(width), np.int32(height), np.int32(iters))
+    program.mandelbrot(queue, (width, height), None, 
+                       np.float64(min_x), np.float64(max_x), np.float64(min_y), np.float64(max_y), 
+                       image_buf, np.int32(width), np.int32(height), np.int32(iters)
+                       )
 
     # Copy the result back to the host
     cl.enqueue_copy(queue, image, image_buf).wait()
@@ -150,33 +153,33 @@ def create_fractal_cupy(min_x, max_x, min_y, max_y, image, iters):
     mandelbrot_kernel = cp.RawKernel(r"""
     extern "C" __global__
     void mandelbrot(
-        float min_x, float max_x, float min_y, float max_y,
+        double min_x, double max_x, double min_y, double max_y,
         unsigned char* image, int width, int height, int iters) {
         
         int x = blockIdx.x * blockDim.x + threadIdx.x;
         int y = blockIdx.y * blockDim.y + threadIdx.y;
 
         if (x < width && y < height) {
-            float pixel_size_x = (max_x - min_x) / width;
-            float pixel_size_y = (max_y - min_y) / height;
-            float real = min_x + x * pixel_size_x;
-            float imag = min_y + y * pixel_size_y;
-            float c_real = real;
-            float c_imag = imag;
-            float z_real = 0.0;
-            float z_imag = 0.0;
+            double pixel_size_x = (max_x - min_x) / width;
+            double pixel_size_y = (max_y - min_y) / height;
+            double real = min_x + x * pixel_size_x;
+            double imag = min_y + y * pixel_size_y;
+            double c_real = real;
+            double c_imag = imag;
+            double z_real = 0.0;
+            double z_imag = 0.0;
 
             int i;
             for (i = 0; i < iters; i++) {
-                float z_real2 = z_real * z_real - z_imag * z_imag + c_real;
-                float z_imag2 = 2.0 * z_real * z_imag + c_imag;
+                double z_real2 = z_real * z_real - z_imag * z_imag + c_real;
+                double z_imag2 = 2.0 * z_real * z_imag + c_imag;
                 z_real = z_real2;
                 z_imag = z_imag2;
                 if (z_real * z_real + z_imag * z_imag >= 4.0) {
                     break;
                 }
             }
-            image[y * width + x] = (unsigned char)(255.0f * i / iters);
+            image[y * width + x] = (unsigned char)(255.0 * i / iters);
         }
     }
     """, "mandelbrot")
@@ -197,7 +200,7 @@ def create_fractal_cupy(min_x, max_x, min_y, max_y, image, iters):
     # Launch the kernel
     mandelbrot_kernel(
         blocks_per_grid, threads_per_block,
-        (cp.float32(min_x), cp.float32(max_x), cp.float32(min_y), cp.float32(max_y),
+        (cp.float64(min_x), cp.float64(max_x), cp.float64(min_y), cp.float64(max_y),
          d_image, cp.int32(width), cp.int32(height), cp.int32(iters))
     )
 

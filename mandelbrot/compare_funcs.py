@@ -61,7 +61,47 @@ print(f"Numba:  {np.unique(numba_image).shape[0]} unique pixels")
 print(f"OpenCL: {np.unique(opencl_image).shape[0]} unique pixels")
 print(f"CuPy:   {np.unique(cupy_image).shape[0]} unique pixels")
 
+print("\nMax and Min Values:")
 print(f"CPU:    (max: {np.max(cpu_image)}, min: {np.min(cpu_image)})")
 print(f"Numba:  (max: {np.max(numba_image)}, min: {np.min(numba_image)})")
 print(f"OpenCL: (max: {np.max(opencl_image)}, min: {np.min(opencl_image)})")
 print(f"CuPy:   (max: {np.max(cupy_image)}, min: {np.min(cupy_image)})")    
+
+
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 6))
+
+plt.hist(cpu_image.ravel(), bins=256, range=(0, 255), alpha=0.5, label="CPU")
+plt.hist(numba_image.ravel(), bins=256, range=(0, 255), alpha=0.5, label="Numba")
+plt.hist(opencl_image.ravel(), bins=256, range=(0, 255), alpha=0.5, label="OpenCL")
+plt.hist(cupy_image.ravel(), bins=256, range=(0, 255), alpha=0.5, label="CuPy")
+
+plt.xlabel("Pixel Value")
+plt.ylabel("Frequency")
+plt.title("Histogram Comparison of Mandelbrot Fractals")
+plt.legend()
+plt.show()
+
+
+plt.figure(figsize=(16, 8))
+
+plt.subplot(2, 2, 1)
+plt.imshow(cpu_image, cmap='hot', extent=(-2, 1, -1, 1))
+plt.title("CPU")
+
+plt.subplot(2, 2, 2)
+plt.imshow(numba_image, cmap='hot', extent=(-2, 1, -1, 1))
+plt.title("Numba")
+
+plt.subplot(2, 2, 3)
+plt.imshow(opencl_image, cmap='hot', extent=(-2, 1, -1, 1))
+plt.title("OpenCL")
+
+plt.subplot(2, 2, 4)
+plt.imshow(cupy_image, cmap='hot', extent=(-2, 1, -1, 1))
+plt.title("CuPy")
+
+plt.tight_layout()
+plt.show()
