@@ -73,6 +73,41 @@ The script `benchmark_mandelbrot.py` benchmarks the performance of Mandelbrot fr
 
 The script `utils.py` contains utility functions for timing and checking the availability of computational libraries.
 
+### Benchmark Results
+The benchmark results for the Mandelbrot fractal generation as a result of running the script `benchmark_mandelbrot.py` are shown below:
+```
+Creating Mandelbrot Set of size 1500x1000 with 50 iterations
+        Number of pixels:    1,500,000
+        Pixels x Iterations: 75,000,000
+------------------------------------------------------------
+Running CPU version (average timing)...
+Average execution time for run_cpu_avg is 8.4652 seconds
+
+Running GPU CUDA version (average timing)...
+Average execution time for run_gpu_cuda_avg is 0.1693 seconds
+
+Running GPU OpenCL version (average timing)...
+Average execution time for run_gpu_opencl_avg is 0.0723 seconds
+
+Running GPU CuPy version (average timing)...
+Average execution time for run_gpu_cupy_avg is 0.0932 seconds
+```
+```
+Creating Mandelbrot Set of size 37500x25000 with 100 iterations
+        Number of pixels:    937,500,000
+        Pixels x Iterations: 93,750,000,000
+------------------------------------------------------------
+
+Running GPU CUDA version (average timing)...
+Average execution time for run_gpu_cuda_avg is 4.7573 seconds
+
+Running GPU OpenCL version (average timing)...
+Average execution time for run_gpu_opencl_avg is 5.6162 seconds
+
+Running GPU CuPy version (average timing)...
+Average execution time for run_gpu_cupy_avg is 4.3302 seconds
+```
+
 ### Example Image
 Here is an example of the Mandelbrot fractal generated using SIZE_MULTI=2 and MAX_ITERS=50:
 ![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png)
@@ -126,6 +161,35 @@ Each of the following CUDA kernels is implemented in a separate file using CuPy'
 - `benchmark_funcs.py`: Benchmark the performance of various particle simulation functions to compare their speed.
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
+### Benchmark Results
+The benchmark results for the particle simulation as a result of running the script `benchmark_funcs.py` are shown below:
+```
+Benchmarking 5,000 particles in a 200.00 x 200.00 space with 10 runs each.
+----------------------------------------------------------------------------------------------------
+
+Benchmarking gravitational force computations...
+compute_forces_np average time:                         0.87466 seconds (std_dev: 0.03086 seconds)
+compute_forces_cp average time:                         0.87244 seconds (std_dev: 0.00243 seconds)
+compute_forces_cudaKernel average time:                 0.02130 seconds (std_dev: 0.00090 seconds)
+----------------------------------------------------------------------------------------------------
+Speedup:                                                41.06x
+
+Benchmarking particle-particle collision handling...
+handle_particle_collisions_np average time:             1.40059 seconds (std_dev: 0.57684 seconds)
+handle_particle_collisions_cp average time:             1.17647 seconds (std_dev: 0.00940 seconds)
+handle_particle_collisions_cKDTree average time:        0.80803 seconds (std_dev: 1.10441 seconds)
+handle_particle_collisions_cudaKernel average time:     0.05238 seconds (std_dev: 0.02090 seconds)
+----------------------------------------------------------------------------------------------------
+Speedup:                                                26.74x
+
+handle_boundary_collisions average time:                0.04352 seconds (std_dev: 0.12656 seconds)
+handle_boundary_collisions_cudaKernel average time:     0.00027 seconds (std_dev: 0.00056 seconds)
+
+Benchmarking CuPy specific functions...
+compute_forces_cudaKernel:              CPU:   221.151 us   +/- 52.04`5 (min:   132.900 / max:   358.000) us    GPU-0: 76154.183 us   +/- 3094.332 (min: 69212.318 / max: 83601.852) us
+handle_particle_collisions_cudaKernel:  CPU:   157.586 us   +/- 41.083 (min:   112.800 / max:   307.400) us     GPU-0: 24926.697 us   +/- 1309.562 (min: 22241.920 / max: 26700.640) us
+handle_boundary_collisions_cudaKernel:  CPU:    82.937 us   +/-  9.473 (min:    76.500 / max:   125.100) us     GPU-0:    98.740 us   +/- 12.590 (min:    85.984 / max:   143.104) us
+```
 
 ## Sorting Algorithms
 This project focuses on sorting algorithms and their implementations using different techniques, including CPU, Numba, and PyOpenCL. The sorting algorithms are implemented for sorting arrays of integers. Currently, the project includes the QuickSort algorithm. Other sorting algorithms can be added in the future.
