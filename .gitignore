@@ -5,7 +5,14 @@ __pycache__/
 *.mp4
 
 # Mandelbrot fractal plots
-mandelbrot/plots/
+fractals/mandelbrot/plots/*
 
 # Julia fractal plots
-julia_set/plots/
+fractals/julia_set/plots/*
+
+# Exceptions for example images
+!/fractals/julia_set/plots/cupy_julia_size2_iters50.png
+!/fractals/julia_set/plots/cupy_julia_size50_iters100.png
+
+!/fractals/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png
+!/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png
