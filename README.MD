@@ -6,6 +6,7 @@ This project contains various Python scripts and modules for performing numerica
 - [Folder Overview](#folder-overview)
 - [Mandelbrot Fractal Generation](#mandelbrot-fractal-generation)
 - [Particle Simulation](#particle-simulation)
+- [Lorenz Attractor](#lorenz-attractor)
 - [Sorting Algorithms](#sorting-algorithms)
     - [QuickSort](#quicksort)
 - [Miscellaneous Computations](#miscellaneous-computations)
@@ -190,6 +191,25 @@ compute_forces_cudaKernel:              CPU:   221.151 us   +/- 52.04`5 (min:   
 handle_particle_collisions_cudaKernel:  CPU:   157.586 us   +/- 41.083 (min:   112.800 / max:   307.400) us     GPU-0: 24926.697 us   +/- 1309.562 (min: 22241.920 / max: 26700.640) us
 handle_boundary_collisions_cudaKernel:  CPU:    82.937 us   +/-  9.473 (min:    76.500 / max:   125.100) us     GPU-0:    98.740 us   +/- 12.590 (min:    85.984 / max:   143.104) us
 ```
+
+## Lorenz Attractor
+This project focuses on simulating the Lorenz Attractor using different computational techniques. This is a classic example of a chaotic system that exhibits sensitive dependence on initial conditions. It is also a problem that is not easily parallelizable due to the iterative nature of the calculations, making it a good candidate for comparison between CPU and GPU implementations.
+The Lorenz Attractor is a set of chaotic solutions to a system of differential equations that exhibit sensitive dependence on initial conditions. The attractor is defined by the following equations:
+$$
+\begin{aligned}
+X' &= \sigma (Y - X) \\
+Y' &= X (\rho - Z) - Y \\
+Z' &= X Y - \beta Z
+\end{aligned}
+$$
+where $X, Y, Z$ are the state variables, and $\sigma, \rho, \beta$ are the parameters of the system.
+
+### Main Scripts
+- `lorenz.py`: Main script to run the Lorenz Attractor simulation using different techniques and compare their performance.
+- `lorenz_funcs.py`: Functions to calculate the Lorenz Attractor using different techniques.
+
+
+
 
 ## Sorting Algorithms
 This project focuses on sorting algorithms and their implementations using different techniques, including CPU, Numba, and PyOpenCL. The sorting algorithms are implemented for sorting arrays of integers. Currently, the project includes the QuickSort algorithm. Other sorting algorithms can be added in the future.
