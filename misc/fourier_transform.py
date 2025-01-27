@@ -2,10 +2,19 @@ import numpy as np
 from numba import jit
 from utils import *
 
+import cupyx.scipy.fft as cufft
+import scipy.fft
+
 @avg_timing_decorator
 def fftNumpy(v):
     """Compute the Fourier Transform using NumPy."""
     return np.fft.fft(v)
+
+@avg_timing_decorator
+def fftCuPy(v):
+    """Compute the Fourier Transform using CuPy."""
+    scipy.fft.set_global_backend(cufft)
+    return scipy.fft.fft(v)
 
 @avg_timing_decorator
 def fourierTransformNumpy(v):
@@ -45,6 +54,7 @@ def main():
     v = np.random.rand(N).astype(np.float32)
     
     v_fft = fftNumpy(v)
+    v_fft_cupy = fftCuPy(v)
     v_ft_numpy = fourierTransformNumpy(v)
     v_ft_numba = fourierTransformNumba(v)
 
