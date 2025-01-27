@@ -6,3 +6,6 @@ __pycache__/
 
 # Mandelbrot fractal plots
 mandelbrot/plots/
+
+# Julia fractal plots
+julia_set/plots/
