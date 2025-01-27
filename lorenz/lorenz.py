@@ -50,22 +50,22 @@ def main():
     
     PLOT = False
     
-    print("Running Lorenz attractor on CPU...")
+    print("Running Lorenz attractor on CPU...           ", end="", flush=True)
     start_time = time.time()
     xs_cpu, ys_cpu, zs_cpu = run_lorenz_cpu(STEPS, X, Y, Z, S, R, B, DT)
-    print(f"CPU execution time: {time.time() - start_time:.4f} seconds")
+    print(f" execution time: {time.time() - start_time:.4f} seconds")
     
     if check_numba_cuda():
-        print("Running Lorenz attractor on GPU Numba CUDA...")
+        print("Running Lorenz attractor on GPU Numba CUDA...", end="", flush=True)
         start_time = time.time()
         xs_gpu, ys_gpu, zs_gpu = run_lorenz_gpu(STEPS, X, Y, Z, S, R, B, DT)
-        print(f"GPU execution time: {time.time() - start_time:.4f} seconds")
+        print(f" execution time: {time.time() - start_time:.4f} seconds")
 
     if check_openCl():
-        print("Running Lorenz attractor on GPU OpenCL...")
+        print("Running Lorenz attractor on GPU OpenCL...    ", end="", flush=True)
         start_time = time.time()
         xs_gpu, ys_gpu, zs_gpu = run_lorenz_opencl(STEPS, X, Y, Z, S, R, B, DT)
-        print(f"GPU execution time: {time.time() - start_time:.4f} seconds")
+        print(f" execution time: {time.time() - start_time:.4f} seconds")
         
     if PLOT:
         fig = plt.figure(figsize=(12, 6))
