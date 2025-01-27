@@ -4,7 +4,9 @@ This project contains various Python scripts and modules for performing numerica
 
 ## Navigation
 - [Folder Overview](#folder-overview)
-- [Mandelbrot Fractal Generation](#mandelbrot-fractal-generation)
+- [Fractal Generation](#fractal-generation)
+    - [Mandelbrot Fractal](#mandelbrot-fractal)
+    - [Julia Fractal](#julia-fractal)
 - [Particle Simulation](#particle-simulation)
 - [Lorenz Attractor](#lorenz-attractor)
 - [Sorting Algorithms](#sorting-algorithms)
@@ -23,6 +25,14 @@ This folder contains scripts for generating Mandelbrot fractals using different 
 - `mandelbrot.py`: Main script to run and time the Mandelbrot fractal on the CPU and GPU.
 - `mandelbrot_funcs.py`: Functions to create the Mandelbrot fractal on the CPU and GPU.
 - `benchmark_mandelbrot.py`: Script to benchmark the performance of Mandelbrot fractal generation using different techniques.
+- `utils.py`: Utility functions for timing and checking the availability of computational libraries.
+
+### `julia_set/`
+This folder contains scripts for generating Julia fractals using different computational techniques, including CPU, GPU with Numba, PyOpenCL, and CuPy.
+
+- `julia.py`: Main script to run and time the Julia fractal on the CPU and GPU.
+- `julia_funcs.py`: Functions to create the Julia fractal on the CPU and GPU.
+- `benchmark_julia.py`: Script to benchmark the performance of Julia fractal generation using different techniques.
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
 ### `particle_simulation/`
@@ -57,7 +67,8 @@ This folder contains miscellaneous scripts for various numerical computations an
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
 
-## Mandelbrot Fractal Generation
+## Fractal Generation
+### Mandelbrot Fractal
 This project focuses on generating the Mandelbrot fractal using different computational techniques, including CPU, GPU with Numba, PyOpenCL, and CuPy. The Mandelbrot set is a set of complex numbers for which the function `f(z) = z^2 + c` does not diverge when iterated from `z = 0`. The set is defined by iterating the function until the magnitude of the result exceeds a certain threshold or the maximum number of iterations is reached. Thus the Mandelbrot set is defined as the set of complex numbers `c` for which the sequence `f(0), f(f(0)), f(f(f(0))), ...` remains bounded.
 
 The main script `mandelbrot.py` generates the Mandelbrot fractal using different techniques and compares their performance.
@@ -74,7 +85,7 @@ The script `benchmark_mandelbrot.py` benchmarks the performance of Mandelbrot fr
 
 The script `utils.py` contains utility functions for timing and checking the availability of computational libraries.
 
-### Benchmark Results
+#### Benchmark Results
 The benchmark results for the Mandelbrot fractal generation as a result of running the script `benchmark_mandelbrot.py` are shown below:
 ```
 Creating Mandelbrot Set of size 1500x1000 with 50 iterations
@@ -109,11 +120,70 @@ Running GPU CuPy version (average timing)...
 Average execution time for run_gpu_cupy_avg is 4.3302 seconds
 ```
 
-### Example Image
+#### Example Image
 Here is an example of the Mandelbrot fractal generated using SIZE_MULTI=2 and MAX_ITERS=50:
-![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png)
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/fractals/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png)
 
-To see a larger image, run with SIZE_MULTI=50 and MAX_ITERS=100 (37500x25000 pixels), download the image [here](https://github.com/SantiagoEnriqueGA/gpu_projects/blob/main/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png).
+To see a larger image, run with SIZE_MULTI=50 and MAX_ITERS=100 (37500x25000 pixels), download the image [here](https://github.com/SantiagoEnriqueGA/gpu_projects/blob/main/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png).
+
+
+### Julia Fractal
+This project focuses on generating the Julia fractal using different computational techniques, including CPU, GPU with Numba, PyOpenCL, and CuPy. The Julia set is a set of complex numbers for which the function `f(z) = z^2 + c` does not diverge when iterated from `z = 0`. The set is defined by iterating the function until the magnitude of the result exceeds a certain threshold or the maximum number of iterations is reached. Thus the Julia set is defined as the set of complex numbers `c` for which the sequence `f(0), f(f(0)), f(f(f(0))), ...` remains bounded.
+
+The main script `julia.py` generates the Julia fractal using different techniques and compares their performance. The script uses the following parameters:
+- `SIZE_MULTI` - Multiplier for the image size (e.g., 1 for 750x500, 2 for 1500x1000).
+- `MAX_ITERS` - Maximum number of iterations for the Julia set calculation.
+- `SHOW_IMAGE` - Whether to display the generated image.
+- `SAVE_IMAGE` - Whether to save the generated image.
+- `CPU` - Whether to run the CPU implementation. (For large images, this can be slow)
+
+The script `julia_funcs.py` contains the functions for generating the Julia fractal on the CPU and GPU using Numba, PyOpenCL, and CuPy.
+
+The script `benchmark_julia.py` benchmarks the performance of Julia fractal generation using different techniques and image sizes.
+
+The script `utils.py` contains utility functions for timing and checking the availability of computational libraries.
+
+#### Benchmark Results
+The benchmark results for the Julia fractal generation as a result of running the script `benchmark_julia.py` are shown below:
+```
+Creating Julia Set Set of size 1500x1000 with 50 iterations
+        Number of pixels:    1,500,000
+        Pixels x Iterations: 75,000,000
+------------------------------------------------------------
+Running CPU version (average timing)...
+Average execution time for run_cpu_avg is 11.6283 seconds
+
+Running GPU CUDA version (average timing)...
+Average execution time for run_gpu_cuda_avg is 0.1052 seconds
+
+Running GPU OpenCL version (average timing)...
+Average execution time for run_gpu_opencl_avg is 0.0802 seconds
+
+Running GPU CuPy version (average timing)...
+Average execution time for run_gpu_cupy_avg is 0.0316 seconds
+```
+```
+Creating Julia Set Set of size 37500x25000 with 100 iterations
+        Number of pixels:    937,500,000
+        Pixels x Iterations: 93,750,000,000
+------------------------------------------------------------
+
+Running GPU CUDA version (average timing)...
+Average execution time for run_gpu_cuda_avg is 4.5497 seconds
+
+Running GPU OpenCL version (average timing)...
+Average execution time for run_gpu_opencl_avg is 5.5448 seconds
+
+Running GPU CuPy version (average timing)...
+Average execution time for run_gpu_cupy_avg is 4.2457 seconds
+```
+
+
+#### Example Image
+Here is an example of the Mandelbrot fractal generated using SIZE_MULTI=2 and MAX_ITERS=50:
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/fractals/julia_set/plots/cupy_julia_size2_iters50.png)
+
+To see a larger image, run with SIZE_MULTI=50 and MAX_ITERS=100 (37500x25000 pixels), download the image [here](https://github.com/SantiagoEnriqueGA/gpu_projects/blob/main/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png).
 
 ## Particle Simulation
 This project focuses on simulating particle interactions using CUDA and other techniques. The simulation involves particles initialized with random positions, velocities, and masses, interacting through gravitational forces and colliding with each other and the boundaries of the simulation space. The particles are colored based on their velocity to visualize their movement. Particle positions, velocities, and masses are all calculated as float64 arrays for high precision.
