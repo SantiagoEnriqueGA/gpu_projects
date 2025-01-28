@@ -4,7 +4,7 @@ import os
 import sys
 
 # OpenCL context version, set to device
-PYOPENCL_CTX_VERSION = '1'
+PYOPENCL_CTX_VERSION = '0'
 
 def timing_decorator(func):
     def wrapper(*args, **kwargs):
