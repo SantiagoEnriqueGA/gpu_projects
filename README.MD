@@ -11,6 +11,7 @@ This project contains various Python scripts and modules for performing numerica
 - [Lorenz Attractor](#lorenz-attractor)
 - [Sorting Algorithms](#sorting-algorithms)
     - [QuickSort](#quicksort)
+    - [HeapSort](#heapsort)
 - [Miscellaneous Computations](#miscellaneous-computations)
     - [Fill Array](#fill-array)
     - [Fourier Transform](#fourier-transform)
@@ -54,7 +55,8 @@ This folder contains scripts for simulating particle interactions using CUDA and
 ### `sorting/`
 This folder contains scripts for sorting algorithms and related utilities.
 
-- `quick_sort.py`: Script to perform QuickSort using different techniques, including CPU, Numba, and PyOpenCL.
+- `quicksort.py`: Script to perform QuickSort using different techniques, including CPU, Numba, and PyOpenCL.
+- `heapsort.py`: Script to perform HeapSort using different techniques, including CPU, Numba, and PyOpenCL.
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
 ### `misc/`
@@ -322,16 +324,48 @@ Running 40000 steps of Lorenz attractor...
 This project focuses on sorting algorithms and their implementations using different techniques, including CPU, Numba, and PyOpenCL. The sorting algorithms are implemented for sorting arrays of integers. Currently, the project includes the QuickSort algorithm. Other sorting algorithms can be added in the future.
 
 ### QuickSort
-The QuickSort algorithm is a comparison-based sorting algorithm that divides the input array into two subarrays based on a pivot element. The subarrays are then recursively sorted. The QuickSort algorithm has an average time complexity of O(n log n) and is widely used in practice due to its efficiency.
+The QuickSort algorithm is a comparison-based sorting algorithm that divides the input array into two subarrays based on a pivot element. The subarrays are then recursively sorted. The QuickSort algorithm has an average time complexity of O(n log n) and is widely used in practice due to its efficiency. In the worst-case scenario, the algorithm has a time complexity of O(n^2).
 
-The script `quick_sort.py` contains the implementation of the QuickSort algorithm. Each implementation is timed to compare the performance compared to the standard NumPy implementation. Each implementation is tested with the same input array and compared for correctness. The following implementations are included:
+The script `quicksort.py` contains the implementation of the QuickSort algorithm. Each implementation is timed to compare the performance compared to the standard NumPy implementation. Each implementation is tested with the same input array and compared for correctness. The following implementations are included:
 - `NumPy`: Standard NumPy implementation of QuickSort.
 - `CPU`: Base CPU implementation using Python.
 - `Numba`: Numba implementation of QuickSort for JIT compilation.
 - `PyOpenCL`: PyOpenCL implementation of QuickSort for GPU acceleration.
 
+```
+Sorting array of size 1,000,000 elements.
+------------------------------------------------------------
+Execution time for sort_numpy is 0.0550 seconds
+Execution time for quicksort_cpu is 4.9470 seconds
+Execution time for quicksort_numba is 1.3436 seconds
+Execution time for quicksort_opencl is 5.1661 seconds
+All elements of the result are equal!
+```
+
 Performance benchmarks are conducted to compare the speed of each implementation for sorting large arrays of integers. The results are plotted to visualize the performance differences between the implementations:
-![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/sorting/quick_sort_comparison.png)
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/sorting/quicksort_comparison.png)
+
+### HeapSort
+The HeapSort algorithm is a comparison-based sorting algorithm that uses a binary heap data structure to sort elements. The algorithm has a time complexity of O(n log n) and is an in-place sorting algorithm. In the worst-case scenario, the algorithm has a space complexity of O(1).
+
+The script `heapsort.py` contains the implementation of the HeapSort algorithm using different techniques, including CPU, Numba, and PyOpenCL. The performance of each implementation is compared for sorting large arrays of integers. The following implementations are included:
+- `NumPy`: Standard NumPy implementation of HeapSort.
+- `CPU`: Base CPU implementation using Python.
+- `Numba`: Numba implementation of HeapSort for JIT compilation.
+- `PyOpenCL`: PyOpenCL implementation of HeapSort for GPU acceleration.
+
+```
+Sorting array of size 1,000,000 elements.
+------------------------------------------------------------
+Execution time for sort_numpy is 0.1383 seconds
+Execution time for heapsort_cpu is 11.7589 seconds
+Execution time for heapsort_numba is 1.3883 seconds
+Execution time for heapsort_opencl is 10.3213 seconds
+All elements of the result are equal!
+```
+
+Performance benchmarks are conducted to compare the speed of each implementation for sorting large arrays of integers. The results are plotted to visualize the performance differences between the implementations:
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/sorting/heapsort_comparison.png)
 
 ## Miscellaneous Computations
 This folder contains miscellaneous scripts for various numerical computations and simulations. The scripts compare the performance of different implementations using NumPy, Numba, CUDA, and PyOpenCL.
@@ -406,7 +440,5 @@ All elements of the result are equal!
 ## Possible Future Additions
 - Julia Set Fractal Generation: Similar to Mandelbrot, but with different initial conditions.
 - Barnsley Fern Fractal: A fractal that resembles the shape of a fern.
-- Game of Life: A cellular automaton devised by John Conway.
-- N-Body Simulation: Simulating the motion of particles under the influence of physical forces.
 - Heat Diffusion Simulation: Simulating the distribution of heat in a given space over time.
 - Fluid Dynamics Simulation: Using methods like Lattice Boltzmann to simulate fluid flow.
