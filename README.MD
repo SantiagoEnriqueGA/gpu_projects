@@ -18,6 +18,7 @@ This project contains various Python scripts and modules for performing numerica
     - [Fourier Transform](#fourier-transform)
     - [Monte Carlo Pi Estimation](#monte-carlo-pi-estimation)
     - [Multiply Vectors](#multiply-vectors)
+    - [Prime Number Generation](#prime-number-generation)
 
 ## Folder Overview
 
@@ -68,6 +69,8 @@ This folder contains miscellaneous scripts for various numerical computations an
 - `fourier_transform.py`: Script to compute the Fourier Transform using NumPy and Numba.
 - `monte_carlo_pi.py`: Script to estimate Pi using the Monte Carlo method with NumPy and Numba.
 - `multiply_vectors.py`: Script to multiply two vectors using NumPy and Numba.
+- `prime_numbers_time.py`: Script to generate prime numbers up to a given time limit using different techniques.
+- `prime_numbers_lim.py`: Script to generate prime numbers up to a given number limit using different techniques.
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
 
@@ -460,3 +463,31 @@ Average execution time for multiplyVectorsNumba is 4.1995 seconds
 Average execution time for multiplyVectorsNumbaJit is 3.0660 seconds
 All elements of the result are equal!
 ```
+
+### Prime Number Generation
+The scripts `prime_numbers_time.py` and `prime_numbers_lim.py` generate prime numbers up to a given time or number limit using different techniques, including CPU, Numba, PyOpenCL, and CuPy. The performance of each implementation is compared with each other to ensure correctness and speed.
+
+An example of the performance comparison based on time is shown below:
+```
+Generating prime numbers within 30 seconds.
+------------------------------------------------------------
+CPU    produced 317,130    prime numbers in 30 seconds
+Numba  produced 2,864,911  prime numbers in 30 seconds
+OpenCL produced 5,653,023  prime numbers in 30 seconds
+All methods produced the same results!
+```
+
+An example of the performance comparison based on the number limit is shown below:
+```
+Generating prime numbers up to 10,000,000.
+------------------------------------------------------------
+Execution time for primes_cpu is 1.2996 seconds
+Execution time for primes_numba is 0.6365 seconds
+Execution time for primes_opencl is 1.2198 seconds
+All methods produced the same results!
+Last 5 prime numbers: [9999937, 9999943, 9999971, 9999973, 9999991]
+```
+
+#### Visualization of Prime Number Generation Functions
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/misc/prime_numbers_lim.png)
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/misc/prime_numbers_time.png)
