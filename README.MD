@@ -277,7 +277,44 @@ where $X, Y, Z$ are the state variables, and $\sigma, \rho, \beta$ are the param
 ### Main Scripts
 - `lorenz.py`: Main script to run the Lorenz Attractor simulation using different techniques and compare their performance.
 - `lorenz_funcs.py`: Functions to calculate the Lorenz Attractor using different techniques.
+- `benchmark_lorenz.py`: Script to benchmark the performance of the Lorenz Attractor simulation.
 
+#### Lorenz Attractor Output
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/lorenz/lorenz.png)
+
+
+#### Benchmark Results
+The benchmark results for the Lorenz Attractor simulation as a result of running the script `benchmark_lorenz.py` are shown below. Note that the GPU version times increase significantly with the number of steps, indicating that the GPU is not as efficient as the CPU at this particular problem.
+```
+Running 1000 steps of Lorenz attractor... 
+        Running CPU version...         execution time: 0.0010 seconds
+        Running GPU CUDA version...   execution time: 1.4790 seconds
+Running 5000 steps of Lorenz attractor...
+        Running CPU version...         execution time: 0.0030 seconds
+        Running GPU CUDA version...   execution time: 4.6690 seconds
+Running 10000 steps of Lorenz attractor...
+        Running CPU version...         execution time: 0.0060 seconds
+        Running GPU CUDA version...   execution time: 11.0260 seconds
+Running 15000 steps of Lorenz attractor...
+        Running CPU version...         execution time: 0.0090 seconds
+        Running GPU CUDA version...   execution time: 19.6380 seconds
+Running 20000 steps of Lorenz attractor...
+        Running CPU version...         execution time: 0.0110 seconds
+        Running GPU CUDA version...   execution time: 25.2714 seconds
+Running 25000 steps of Lorenz attractor...
+        Running CPU version...         execution time: 0.0150 seconds
+        Running GPU CUDA version...   execution time: 32.9117 seconds
+Running 30000 steps of Lorenz attractor... 
+        Running CPU version...         execution time: 0.0180 seconds
+        Running GPU CUDA version...   execution time: 40.4746 seconds
+Running 35000 steps of Lorenz attractor... 
+        Running CPU version...         execution time: 0.0200 seconds
+        Running GPU CUDA version...   execution time: 53.2662 seconds
+Running 40000 steps of Lorenz attractor... 
+        Running CPU version...         execution time: 0.0230 seconds
+        Running GPU CUDA version...   execution time: 64.6176 seconds
+```
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/lorenz/bench_lorenz.png)
 
 
 
