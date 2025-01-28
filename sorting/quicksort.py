@@ -1,6 +1,5 @@
 import time
 import numpy as np
-import cupy as cp
 from numba import jit
 import matplotlib.pyplot as plt
 import pyopencl as cl
@@ -9,7 +8,7 @@ import os
 from utils import *
 
 # OpenCL context version, set to device
-PYOPENCL_CTX_VERSION = '1'
+PYOPENCL_CTX_VERSION = '0'
 
 @timing_decorator
 def sort_numpy(arr):
@@ -117,7 +116,6 @@ def main():
     SIZE = 1_000_000
     
     arr = np.random.randint(0, 1_000_000, SIZE).astype(np.int32)
-    arr_cp = cp.asarray(arr)
     
     print(f"Sorting array of size {SIZE:,} elements.")
     print("-"*60)
@@ -191,7 +189,7 @@ def main():
     # plt.legend()
     # plt.grid(True)
     # plt.show()
-    # # plt.savefig(f"sorting/quick_sort_comparison.png")
+    # # plt.savefig(f"sorting/quicksort_comparison.png")
     
 
 if __name__ == "__main__":
