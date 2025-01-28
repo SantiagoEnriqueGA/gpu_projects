@@ -21,8 +21,8 @@ void compute_forces_kernel(const double* positions,
         // Compute forces from all other particles
         for (int j = 0; j < N; j++) {
             if (i != j) {
-                double dx = -(positions[j * 2] - pos_i_x);
-                double dy = -(positions[j * 2 + 1] - pos_i_y);
+                double dx = (positions[j * 2] - pos_i_x);
+                double dy = (positions[j * 2 + 1] - pos_i_y);
                 
                 double dist_squared = dx * dx + dy * dy + epsilon;
                 double dist = sqrt(dist_squared);
