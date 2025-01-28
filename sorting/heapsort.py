@@ -48,7 +48,7 @@ def heapsort_cpu(arr):
             heapify(arr, i, 0)
 
     _heapsort_cpu(arr)
-    return list(arr)
+    return arr
 
 
 @timing_decorator
@@ -56,7 +56,7 @@ def heapsort_cpu(arr):
 def heapsort_numba(arr):
     """Perform HeapSort on the CPU using Numba Vectorized Functions."""
     _heapsort_numba(arr, len(arr))
-    return list(arr)
+    return arr
 
 @jit(nopython=True)
 def _heapsort_numba(arr, n):
@@ -69,7 +69,7 @@ def _heapsort_numba(arr, n):
         arr[i], arr[0] = arr[0], arr[i]
         heapify(arr, i, 0)
 
-    return list(arr)
+    return arr
 
 @jit(nopython=True)
 def heapify(arr, n, i):
@@ -187,7 +187,7 @@ def heapsort_opencl(arr):
     cl.enqueue_nd_range_kernel(queue, heapsort_kernel, (1,), None)
     cl.enqueue_copy(queue, arr, arr_buf).wait()
 
-    return list(arr)
+    return arr
 
 
 def main():

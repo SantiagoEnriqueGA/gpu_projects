@@ -38,7 +38,7 @@ def quicksort_cpu(arr):
 def quicksort_numba(arr):
     """Perform QuickSort on the CPU using Numba Vectorized Functions."""
     _quicksort_numba(arr, 0, len(arr) - 1)
-    return list(arr)
+    return arr
 
 @jit(nopython=True)
 def partition(arr, low, high):
@@ -108,7 +108,7 @@ def quicksort_opencl(arr):
     cl.enqueue_nd_range_kernel(queue, quicksort_kernel, (1,), None)
     cl.enqueue_copy(queue, arr, arr_buf).wait()
     
-    return list(arr)
+    return arr
 
 
 def main():
