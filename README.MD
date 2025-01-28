@@ -12,6 +12,7 @@ This project contains various Python scripts and modules for performing numerica
 - [Sorting Algorithms](#sorting-algorithms)
     - [QuickSort](#quicksort)
     - [HeapSort](#heapsort)
+    - [MergeSort](#mergesort)
 - [Miscellaneous Computations](#miscellaneous-computations)
     - [Fill Array](#fill-array)
     - [Fourier Transform](#fourier-transform)
@@ -57,6 +58,7 @@ This folder contains scripts for sorting algorithms and related utilities.
 
 - `quicksort.py`: Script to perform QuickSort using different techniques, including CPU, Numba, and PyOpenCL.
 - `heapsort.py`: Script to perform HeapSort using different techniques, including CPU, Numba, and PyOpenCL.
+- `mergesort.py`: Script to perform MergeSort using different techniques, including CPU, Numba, and PyOpenCL.
 - `utils.py`: Utility functions for timing and checking the availability of computational libraries.
 
 ### `misc/`
@@ -366,6 +368,28 @@ All elements of the result are equal!
 
 Performance benchmarks are conducted to compare the speed of each implementation for sorting large arrays of integers. The results are plotted to visualize the performance differences between the implementations:
 ![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/sorting/heapsort_comparison.png)
+
+
+### MergeSort
+The MergeSort algorithm is a comparison-based sorting algorithm that divides the input array into two halves, recursively sorts the halves, and then merges them. The algorithm has a time complexity of O(n log n) and is stable and efficient for large datasets. In the worst-case scenario, the algorithm has a space complexity of O(n). The script `mergesort.py` contains the implementation of the MergeSort algorithm using different techniques, including CPU, Numba, and PyOpenCL. The performance of each implementation is compared for sorting large arrays of integers. The following implementations are included:
+- `NumPy`: Standard NumPy implementation of MergeSort.
+- `CPU`: Base CPU implementation using Python.
+- `Numba`: Numba implementation of MergeSort for JIT compilation.
+- `PyOpenCL`: PyOpenCL implementation of MergeSort for GPU acceleration.
+
+```
+Sorting array of size 1,000,000 elements.
+------------------------------------------------------------
+Execution time for sort_numpy is 0.0705 seconds
+Execution time for mergesort_cpu is 8.0944 seconds
+Execution time for mergesort_numba is 1.3210 seconds
+Execution time for mergesort_opencl is 1.7379 seconds
+All elements of the result are equal!
+```
+
+Performance benchmarks are conducted to compare the speed of each implementation for sorting large arrays of integers. The results are plotted to visualize the performance differences between the implementations:
+![alt text](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/sorting/mergesort_comparison.png)
+
 
 ## Miscellaneous Computations
 This folder contains miscellaneous scripts for various numerical computations and simulations. The scripts compare the performance of different implementations using NumPy, Numba, CUDA, and PyOpenCL.
