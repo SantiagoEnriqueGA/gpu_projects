@@ -460,9 +460,3 @@ Average execution time for multiplyVectorsNumba is 4.1995 seconds
 Average execution time for multiplyVectorsNumbaJit is 3.0660 seconds
 All elements of the result are equal!
 ```
-
-## Possible Future Additions
-- Julia Set Fractal Generation: Similar to Mandelbrot, but with different initial conditions.
-- Barnsley Fern Fractal: A fractal that resembles the shape of a fern.
-- Heat Diffusion Simulation: Simulating the distribution of heat in a given space over time.
-- Fluid Dynamics Simulation: Using methods like Lattice Boltzmann to simulate fluid flow.
