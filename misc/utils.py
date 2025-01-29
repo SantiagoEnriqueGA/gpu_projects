@@ -4,7 +4,7 @@ import os
 import sys
 
 # OpenCL context version, set to device
-PYOPENCL_CTX_VERSION = '0'
+PYOPENCL_CTX_VERSION = '1'
 
 def timing_decorator(func):
     def wrapper(*args, **kwargs):
@@ -64,7 +64,7 @@ def check_cupy():
     try:
         suppress_output()
         import cupy as cp
-        cp.cuda.Device(0).make_context()
+        cp.cuda.Device(0)
         enable_output()
         return True
     except:

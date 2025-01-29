@@ -1,4 +1,3 @@
-from calendar import c
 import time
 import numpy as np
 import cupy as cp
@@ -10,7 +9,7 @@ import os
 from utils import *
 
 # OpenCL context version, set to device
-PYOPENCL_CTX_VERSION = '0'
+PYOPENCL_CTX_VERSION = '1'
 
 @timing_decorator
 def primes_cpu(limit):
@@ -94,20 +93,16 @@ def primes_opencl(limit):
 
 @timing_decorator
 def primes_cupy(limit):
-    """Generate prime numbers up to a given limit using CuPy"""
-    primes = cp.zeros(limit + 1, dtype=cp.int32)
+    """Generate prime numbers up to a given limit using CuPy with the Sieve of Eratosthenes."""
+    primes = cp.ones(limit + 1, dtype=cp.bool_)  # Initialize all numbers as prime
+    primes[:2] = 0  # Mark 0 and 1 as non-prime
 
-    @cp.fuse()
-    def is_prime(num):
-        if num < 2:
-            return 0
-        for i in range(2, int(cp.sqrt(num)) + 1):
-            if num % i == 0:
-                return 0
-        return num
+    for num in range(2, int(cp.sqrt(limit)) + 1):
+        if primes[num]:  # If num is still marked prime
+            primes[num * num : limit + 1 : num] = 0  # Mark multiples as non-prime
 
-    primes = is_prime(cp.arange(limit + 1))
-    return cp.asnumpy(primes[primes > 0])
+    return cp.asnumpy(cp.nonzero(primes)[0])  # Extract prime numbers
+
 
 def main():
     # Parameters
@@ -225,3 +220,19 @@ if __name__ == "__main__":
 #         if is_prime:
 #             primes.append(num)
 #     return primes
+
+
+# @timing_decorator
+# def primes_cupy(limit):
+#     """Generate prime numbers up to a given limit using CuPy (GPU acceleration)."""
+#     arr = cp.arange(limit + 1)
+
+#     # Start with all numbers marked as prime (1 = prime, 0 = not prime)
+#     primes = cp.ones(limit + 1, dtype=cp.bool_)
+#     primes[:2] = 0  # Mark 0 and 1 as non-prime
+
+#     for num in range(2, int(cp.sqrt(limit)) + 1):
+#         if primes[num]:  # If num is still marked prime
+#             primes[num * num : limit + 1 : num] = 0  # Mark multiples as non-prime
+
+#     return cp.asnumpy(arr[primes])  # Return only the prime numbers
