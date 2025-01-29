@@ -222,10 +222,6 @@ This project focuses on simulating particle interactions using CUDA and other te
     - The profiling results are saved in `profile_results.prof`.
     - Profiling shows that after optimization, the simulation spends most of its time converting to Numpy arrays for visualization and writing frames to disk.
 
-### Example Video
-The following video shows the simulation running for 30 seconds with the default parameters:
-![video](https://raw.githubusercontent.com/SantiagoEnriqueGA/gpu_projects/refs/heads/main/particle_simulation/vids/particle_simulation_ex_30secs.mp4)
-
 ### CUDA Kernels
 Each of the following CUDA kernels is implemented in a separate file using CuPy's RawKernel interface which allows for direct CUDA kernel execution by passing the kernel code written in CUDA C.  
 - `cuda_compute_forces.py`: CUDA kernel for computing gravitational forces between particles.  
