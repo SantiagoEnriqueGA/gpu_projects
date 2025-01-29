@@ -29,6 +29,7 @@ def benchmark_pathfinding_algorithms():
     
     funcs_to_time = [
         ("BFS", time_function(bfs)),
+        # ("BFS_CUDA", time_function(bfs_cuda)),
         ("DFS", time_function(dfs)),
         ("Dijkstra", time_function(dijkstra)),
         ("A* (Manhattan)", time_function(lambda maze: a_star(maze, "manhattan"))),

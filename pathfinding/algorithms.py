@@ -1,6 +1,7 @@
 import queue
 import heapq
 import math
+import cupy as cp
 from utils import *
 
 def bfs(maze):
@@ -54,6 +55,113 @@ def bfs(maze):
     # return True, path, len(path)-1, steps, list(visited)
     # If no path is found, return False
     return False, [], 0, steps, list(visited)
+
+def bfs_cuda(maze):
+    """
+    Breadth-First Search algorithm to find the shortest path in a maze.
+    Implemented using CP CUDA Raw Kernels.
+    
+    Parameters:
+        maze (list) - A 2D list representing the maze.
+    
+    Returns:
+        bool - True if the path is found, False otherwise.
+        list - The path from the start to the end position.
+        int - The length of the path.
+        int - The number of steps taken.
+        list - The list of visited positions.
+    """
+    start = "O"
+    end = "X"
+    start_pos = find_val(maze, start)
+    end_pos = find_val(maze, end)
+
+    # Convert maze to a 1D array for CUDA processing
+    maze_1d = cp.array([cell for row in maze for cell in row], dtype=cp.int32)
+    rows, cols = len(maze), len(maze[0])
+    
+    # Define CUDA kernel
+    bfs_kernel = cp.RawKernel(r'''
+    extern "C" __global__
+    void bfs_kernel(int* maze, int rows, int cols, int* start_pos, int* end_pos, int* path, int* path_len, int* steps, int* visited) {
+        int idx = blockIdx.x * blockDim.x + threadIdx.x;
+        if (idx >= rows * cols) return;
+
+        // Initialize BFS structures
+        int q[1024];
+        int q_start = 0, q_end = 0;
+        int visited_local[1024];
+        int visited_count = 0;
+
+        // Enqueue start position
+        q[q_end++] = start_pos[0] * cols + start_pos[1];
+        visited_local[visited_count++] = q[q_start];
+
+        // BFS loop
+        while (q_start < q_end) {
+            int current = q[q_start++];
+            int row = current / cols;
+            int col = current % cols;
+
+            // Check if we reached the end
+            if (row == end_pos[0] && col == end_pos[1]) {
+                path[path_len[0]++] = current;
+                steps[0] = q_end;
+                for (int i = 0; i < visited_count; ++i) {
+                    visited[i] = visited_local[i];
+                }
+                return;
+            }
+
+            // Explore neighbors
+            int neighbors[4][2] = {{row-1, col}, {row+1, col}, {row, col-1}, {row, col+1}};
+            for (int i = 0; i < 4; ++i) {
+                int r = neighbors[i][0];
+                int c = neighbors[i][1];
+                if (r >= 0 && r < rows && c >= 0 && c < cols && maze[r * cols + c] != '#' && maze[r * cols + c] != 'X') {
+                    int neighbor_idx = r * cols + c;
+                    bool already_visited = false;
+                    for (int j = 0; j < visited_count; ++j) {
+                        if (visited_local[j] == neighbor_idx) {
+                            already_visited = true;
+                            break;
+                        }
+                    }
+                    if (!already_visited) {
+                        q[q_end++] = neighbor_idx;
+                        visited_local[visited_count++] = neighbor_idx;
+                    }
+                }
+            }
+        }
+
+        // If no path is found
+        path_len[0] = 0;
+        steps[0] = q_end;
+        for (int i = 0; i < visited_count; ++i) {
+            visited[i] = visited_local[i];
+        }
+    }
+    ''', 'bfs_kernel')
+
+    # Allocate memory for results
+    path = cp.zeros((rows * cols, 2), dtype=cp.int32)
+    path_len = cp.zeros(1, dtype=cp.int32)
+    steps = cp.zeros(1, dtype=cp.int32)
+    visited = cp.zeros((rows * cols, 2), dtype=cp.int32)
+
+    # Launch kernel
+    bfs_kernel((1,), (1,), (maze_1d, rows, cols, cp.array(start_pos, dtype=cp.int32), cp.array(end_pos, dtype=cp.int32), path, path_len, steps, visited))
+
+    # Convert results back to host
+    path_host = cp.asnumpy(path)[:path_len[0]]
+    steps_host = int(steps[0])
+    visited_host = cp.asnumpy(visited)[:steps_host]
+
+    if path_len[0] > 0:
+        return True, path_host.tolist(), path_len[0] - 1, steps_host, visited_host.tolist()
+    else:
+        return False, [], 0, steps_host, visited_host.tolist()
 
 def dfs(maze):
     """
