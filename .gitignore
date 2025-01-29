@@ -1,6 +1,9 @@
 # pycache
 __pycache__/
 
+# Archives
+__archive/
+
 # mp4
 *.mp4
 
