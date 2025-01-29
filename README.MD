@@ -20,6 +20,7 @@ This project contains various Python scripts and modules for performing numerica
     - [Multiply Vectors](#multiply-vectors)
     - [Prime Number Generation](#prime-number-generation)
 
+
 ## Folder Overview
 
 ### `mandelbrot/`
@@ -221,6 +222,12 @@ This project focuses on simulating particle interactions using CUDA and other te
     - Profiling helps identify areas of the code that can be optimized for better performance.
     - The profiling results are saved in `profile_results.prof`.
     - Profiling shows that after optimization, the simulation spends most of its time converting to Numpy arrays for visualization and writing frames to disk.
+
+### Simulation Video Example
+<video controls>
+  <source src="https://github.com/SantiagoEnriqueGA/gpu_projects/raw/refs/heads/main/particle_simulation/vids/particle_simulation_ex_10secs.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### CUDA Kernels
 Each of the following CUDA kernels is implemented in a separate file using CuPy's RawKernel interface which allows for direct CUDA kernel execution by passing the kernel code written in CUDA C.  
