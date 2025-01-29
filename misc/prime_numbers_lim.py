@@ -181,9 +181,10 @@ if __name__ == "__main__":
 # OUTPUT
 # Generating prime numbers up to 10,000,000.
 # ------------------------------------------------------------
-# Execution time for primes_cpu is 1.2996 seconds
-# Execution time for primes_numba is 0.6365 seconds
-# Execution time for primes_opencl is 1.2198 seconds
+# Execution time for primes_cpu is 1.8090 seconds
+# Execution time for primes_numba is 0.8160 seconds
+# Execution time for primes_opencl is 1.1751 seconds
+# Execution time for primes_cupy is 0.5790 seconds
 # All methods produced the same results!
 # Last 5 prime numbers: [9999937, 9999943, 9999971, 9999973, 9999991]
 
