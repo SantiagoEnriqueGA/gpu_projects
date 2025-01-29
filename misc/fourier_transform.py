@@ -1,5 +1,8 @@
 import numpy as np
 from numba import jit
+import cupy as cp
+import cupyx.scipy.fft as cufft
+
 from utils import *
 
 import cupyx.scipy.fft as cufft
@@ -13,8 +16,12 @@ def fftNumpy(v):
 @avg_timing_decorator
 def fftCuPy(v):
     """Compute the Fourier Transform using CuPy."""
-    scipy.fft.set_global_backend(cufft)
-    return scipy.fft.fft(v)
+    
+    # Compute FFT on GPU
+    result_gpu = cufft.fft(v)
+    # Transfer result back to CPU
+    return result_gpu
+
 
 @avg_timing_decorator
 def fourierTransformNumpy(v):
@@ -53,12 +60,16 @@ def main():
     # Initialize a vector of random floats
     v = np.random.rand(N).astype(np.float32)
     
+    # Transfer data to GPU
+    v_gpu = cp.asarray(v)
+    
     v_fft = fftNumpy(v)
-    v_fft_cupy = fftCuPy(v)
+    v_fft_cupy = cp.asnumpy(fftCuPy(v_gpu))
     v_ft_numpy = fourierTransformNumpy(v)
     v_ft_numba = fourierTransformNumba(v)
 
     assert np.allclose(v_fft, v_ft_numba, atol=1e-5)
+    assert np.allclose(v_fft, v_fft_cupy, atol=1e-5)
     assert np.allclose(v_fft, v_ft_numpy, atol=1e-5)
     print(f"All elements of the result are equal!")
         
@@ -67,7 +78,8 @@ if __name__ == "__main__":
     
 # OUTPUT:
 # Computing the Fourier Transform of a 2,000 element vector.
-# Average execution time for fftNumpy is 0.0000 seconds
-# Average execution time for fourierTransformNumpy is 5.5902 seconds
-# Average execution time for fourierTransformNumba is 0.3163 seconds
+# Average execution time for fftNumpy is 0.0002 seconds
+# Average execution time for fftCuPy is 0.0448 seconds
+# Average execution time for fourierTransformNumpy is 7.2348 seconds
+# Average execution time for fourierTransformNumba is 0.3101 seconds
 # All elements of the result are equal!
