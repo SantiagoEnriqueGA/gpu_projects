@@ -427,31 +427,46 @@ All elements of the result are equal!
 ```
 
 ### Monte Carlo Pi Estimation
-The script `monte_carlo_pi.py` estimates the value of Pi using the Monte Carlo method with NumPy and Numba. The performance of each implementation is compared for different numbers of samples. A visualization of the Monte Carlo simulation for multiple sample sizes is also provided.
+The script `monte_carlo_pi.py` estimates the value of Pi using the Monte Carlo method with NumPy, Numba, and CuPy (Base and CUDA Kernel). The performance of each implementation is compared for different numbers of samples. A visualization of the Monte Carlo simulation for multiple sample sizes is also provided.
 
 An example of the performance comparison is shown below:
 ```
 Estimating Pi using 100,000,000 samples.
-Average execution time for monteCarloPiNumpy_AVG is 2.1093 seconds
-Average execution time for monteCarloPiNumba_AVG is 1.9931 seconds
-Pi estimate using NumPy: 3.14150216
-Pi estimate using Numba: 3.14172632
+Average execution time for monteCarloPiNumpy_AVG is 2.1847 seconds
+Average execution time for monteCarloPiNumba_AVG is 1.0806 seconds
+Average execution time for monteCarloPiCuPy_AVG is 0.4840 seconds
+Average execution time for monteCarloPiCuPyKernel_AVG is 0.0336 seconds
+
+Pi estimate using NumPy:       3.1416502
+Pi estimate using Numba:       3.14157812
+Pi estimate using CuPy:        3.141483
+Pi estimate using CuPy Kernel: 3.14175208
 
 Estimating Pi using 10,000 samples.
-        Average execution time for NumPy: 0.0002 seconds
-        Average execution time for Numba: 0.1284 seconds
+        Average execution time for NumPy:       0.0002 seconds
+        Average execution time for Numba:       0.1140 seconds
+        Average execution time for CuPy:        0.2349 seconds
+        Average execution time for CuPy Kernel: 0.0024 seconds
 Estimating Pi using 100,000 samples.
-        Average execution time for NumPy: 0.0029 seconds
-        Average execution time for Numba: 0.0011 seconds
+        Average execution time for NumPy:       0.0022 seconds
+        Average execution time for Numba:       0.0010 seconds
+        Average execution time for CuPy:        0.0010 seconds
+        Average execution time for CuPy Kernel: 0.0004 seconds
 Estimating Pi using 1,000,000 samples.
-        Average execution time for NumPy: 0.0205 seconds
-        Average execution time for Numba: 0.0089 seconds
+        Average execution time for NumPy:       0.0252 seconds
+        Average execution time for Numba:       0.0096 seconds
+        Average execution time for CuPy:        0.0044 seconds
+        Average execution time for CuPy Kernel: 0.0006 seconds
 Estimating Pi using 10,000,000 samples.
-        Average execution time for NumPy: 0.2071 seconds
-        Average execution time for Numba: 0.0950 seconds
+        Average execution time for NumPy:       0.2303 seconds
+        Average execution time for Numba:       0.0948 seconds
+        Average execution time for CuPy:        0.0397 seconds
+        Average execution time for CuPy Kernel: 0.0036 seconds
 Estimating Pi using 100,000,000 samples.
-        Average execution time for NumPy: 2.0562 seconds
-        Average execution time for Numba: 1.0004 seconds
+        Average execution time for NumPy:       2.1458 seconds
+        Average execution time for Numba:       0.9563 seconds
+        Average execution time for CuPy:        0.4791 seconds
+        Average execution time for CuPy Kernel: 0.0318 seconds
 ```
 
 **Visualizing the time taken to estimate Pi using the Monte Carlo method with different sample sizes:**
