@@ -21,7 +21,7 @@ ELASTICITY = 0.75     # Collision elasticity coefficient
 PARTICLE_RADIUS = 0.5  # Radius of particles for collision detection
 
 SIM_LENGTH = 60*3        # Simulation length in seconds
-# SIM_LENGTH = 3        # Simulation length in seconds (for testing)
+SIM_LENGTH = 10        # Simulation length in seconds (for testing)
 NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
 
 # Create timestamped output filename

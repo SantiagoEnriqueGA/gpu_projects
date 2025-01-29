@@ -17,4 +17,5 @@ fractals/julia_set/plots/*
 !/fractals/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png
 !/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png
 
-!/particle_simulation/vids/particle_simulation_ex_30secs.mp4
+# !/particle_simulation/vids/particle_simulation_ex_30secs.mp4
+!/particle_simulation/vids/particle_simulation_ex_10secs.mp4
