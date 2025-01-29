@@ -10,9 +10,11 @@ fractals/mandelbrot/plots/*
 # Julia fractal plots
 fractals/julia_set/plots/*
 
-# Exceptions for example images
+# Exceptions for examples
 !/fractals/julia_set/plots/cupy_julia_size2_iters50.png
 !/fractals/julia_set/plots/cupy_julia_size50_iters100.png
 
 !/fractals/mandelbrot/plots/cupy_mandelbrot_size2_iters50.png
 !/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png
+
+!/particle_simulation/vids/particle_simulation_ex_30secs.mp4

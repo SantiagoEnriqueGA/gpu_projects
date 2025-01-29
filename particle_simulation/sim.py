@@ -20,8 +20,8 @@ G = 0.0               # Gravitational constant
 ELASTICITY = 0.75     # Collision elasticity coefficient
 PARTICLE_RADIUS = 0.5  # Radius of particles for collision detection
 
-# SIM_LENGTH = 60*3        # Simulation length in seconds
-SIM_LENGTH = 5        # Simulation length in seconds (for testing)
+SIM_LENGTH = 60*3        # Simulation length in seconds
+# SIM_LENGTH = 3        # Simulation length in seconds (for testing)
 NUM_STEPS = int(SIM_LENGTH * FPS)  # Number of simulation steps
 
 # Create timestamped output filename
@@ -46,7 +46,7 @@ stream2 = cp.cuda.Stream()
 def main():
     # Set up the plot
     fig, ax = plt.subplots()
-    ax.set_title(f"Particle Simulation: {NUM_PARTICLES:,} particles", fontweight="bold")
+    ax.set_title(f"Simulation: {NUM_PARTICLES:,} Colliding Particles", fontweight="bold")
     ax.set_xlim(0, SPACE_SIZE)
     ax.set_ylim(0, SPACE_SIZE)
     ax.get_xaxis().set_visible(False)
@@ -103,7 +103,7 @@ def main():
         return scat,
 
     # Create video writer
-    writer = FFMpegWriter(fps=FPS, metadata={'title': 'Particle Simulation', 'artist': 'Matplotlib'}, bitrate=3600)
+    writer = FFMpegWriter(fps=FPS, metadata={'title': 'Particle Simulation', 'artist': 'Matplotlib'}, bitrate=3600*3)
 
     # Save the animation
     with writer.saving(fig, OUTPUT_FILE, dpi=300):
