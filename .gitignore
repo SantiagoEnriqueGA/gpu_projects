@@ -4,11 +4,17 @@ __pycache__/
 # mp4
 *.mp4
 
+# Thumbnails
+thumbnail.*
+
 # Mandelbrot fractal plots
 fractals/mandelbrot/plots/*
 
 # Julia fractal plots
 fractals/julia_set/plots/*
+
+
+
 
 # Exceptions for examples
 !/fractals/julia_set/plots/cupy_julia_size2_iters50.png
