@@ -10,9 +10,6 @@ fractals/mandelbrot/plots/*
 # Julia fractal plots
 fractals/julia_set/plots/*
 
-# IMG files
-*.png
-
 # Exceptions for examples
 !/fractals/julia_set/plots/cupy_julia_size2_iters50.png
 !/fractals/julia_set/plots/cupy_julia_size50_iters100.png

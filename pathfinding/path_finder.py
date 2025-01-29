@@ -2,10 +2,9 @@ import curses
 from curses import wrapper
 import random
 
-from algorithms import bfs, dfs, a_star, gbfs, dijkstra, bidirectional
-from utils import print_results
+from algorithms import *
+from utils import *
 
-    
 def random_grid_maze(rows, cols):
     """
     Generates a random grid maze.
@@ -71,7 +70,7 @@ def random_maze(rows, cols, p=0.3):
     return maze
 
         
-def main(stdscr):    
+def display_pathfinding(stdscr):    
     # Initialize the curses window, set the colors
     curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -80,42 +79,35 @@ def main(stdscr):
 
     # Maze generation
     # -------------------------------------------   
-    H, W = 10, 10
-    maze = random_grid_maze(H, W)
-    # maze = random_maze(H, W)
+    H, W = 15, 15
+    # maze = random_grid_maze(H, W)
+    maze = random_maze(H, W)
     
     # Run the path finding algorithms
     # -------------------------------------------
-    bfss = bfs(maze, stdscr)
+    bfss = bfs(maze)
     bfss = ["bfs"] + list(bfss)
     
-    gbfss = gbfs(maze, stdscr)
-    gbfss = ["Greedy bfs"] + list(gbfss)
-    
-    dfss = dfs(maze, stdscr)
+    dfss = dfs(maze)
     dfss = ["dfs"] + list(dfss)
     
-    astar_m = a_star(maze, stdscr, "manhattan")
+    astar_m = a_star(maze, "manhattan")
     astar_m = ["astar-manhattan"] + list(astar_m)
     
-    astar_e = a_star(maze, stdscr, "euclidean")
+    astar_e = a_star(maze, "euclidean")
     astar_e = ["astar-euclidean"] + list(astar_e)
     
-    astar_c = a_star(maze, stdscr, "chebyshev")
+    astar_c = a_star(maze, "chebyshev")
     astar_c = ["astar-chebyshev"] + list(astar_c)
     
-    astar_o = a_star(maze, stdscr, "octile")
+    astar_o = a_star(maze, "octile")
     astar_o = ["astar-octile"] + list(astar_o)
     
-    dijk = dijkstra(maze, stdscr)
+    dijk = dijkstra(maze)
     dijk = ["dijkstra"] + list(dijk)
     
-    bi = bidirectional(maze, stdscr)
-    bi = ["bidirectional"] + list(bi)
-    
-    
     # Print the results, and wait for a key press        
-    print_results(stdscr, [bfss,gbfss, dfss, dijk, bi, astar_m, astar_e, astar_c, astar_o] ,maze)
+    print_results(stdscr, [bfss, dfss, dijk, astar_m, astar_e, astar_c, astar_o] ,maze)
     
 if __name__ == "__main__":
-    wrapper(main)
+    wrapper(display_pathfinding)
