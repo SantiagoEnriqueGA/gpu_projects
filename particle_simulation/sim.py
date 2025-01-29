@@ -187,7 +187,7 @@ def handle_particle_collisions_cp(positions, velocities, masses):
 
 def handle_particle_collisions_np(positions, velocities, masses):
     """NumPy implementation of particle-particle collision handling"""
-    delta = positions[:, np.newaxis, :] - positions[cp.newaxis, :, :]
+    delta = positions[:, np.newaxis, :] - positions[np.newaxis, :, :]
     distances = np.linalg.norm(delta, axis=2)
     
     # Find colliding pairs (excluding self-collisions)
