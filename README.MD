@@ -54,6 +54,17 @@ This folder contains scripts for simulating particle interactions using CUDA and
     - `profile_results.prof`: Profiling results for the particle simulation.
     - `profile_results_imageio.prof`: Profiling results for the particle simulation with live visualization.
 
+### `particle_simulation_3d/`
+This folder contains scripts for simulating particle interactions in three-dimensional space using CUDA and other techniques.
+- Main scripts:
+    - `sim.py`: Main script to run the particle simulation in three-dimensional space and visualize the results. Saves the results to a file for later visualization.
+- CUDA kernels:
+    - `cuda_compute_forces.py`: CUDA kernel for computing gravitational forces.
+    - `cuda_handle_particle_collisions.py`: CUDA kernel for handling particle collisions.
+    - `cuda_handle_boundary_collisions.py`: CUDA kernel for handling boundary collisions.
+- Utility scripts:
+    - `benchmark_funcs.py`: Script to benchmark the performance of the particle simulation in three-dimensional space.
+
 ### `sorting/`
 This folder contains scripts for sorting algorithms and related utilities.
 
@@ -193,11 +204,12 @@ Here is an example of the Mandelbrot fractal generated using SIZE_MULTI=2 and MA
 To see a larger image, run with SIZE_MULTI=50 and MAX_ITERS=100 (37500x25000 pixels), download the image [here](https://github.com/SantiagoEnriqueGA/gpu_projects/blob/main/fractals/mandelbrot/plots/cupy_mandelbrot_size50_iters100.png).
 
 ## Particle Simulation
-This project focuses on simulating particle interactions using CUDA and other techniques. The simulation involves particles initialized with random positions, velocities, and masses, interacting through gravitational forces and colliding with each other and the boundaries of the simulation space. The particles are colored based on their velocity to visualize their movement. Particle positions, velocities, and masses are all calculated as float64 arrays for high precision.
+This project focuses on simulating particle interactions using CUDA and other techniques. The simulation involves particles initialized with random positions, velocities, and masses, interacting through gravitational forces and colliding with each other and the boundaries of the simulation space. The particles are colored based on their velocity to visualize their movement. Particle positions, velocities, and masses are all calculated as float64 arrays for high precision. There is also an extension of this simulation implementin three-dimensional space.
 
 ### Main Scripts
-`sim.py`: Run the particle simulation and visualize the results. Each frame of the simulation is saved with matplotlib's FFmpeg writer for visualization.  
-`sim_imageio.py`: Run the particle simulation with live visualization. The simulation is visualized in real-time using the ImageIO library for video writing.
+`particle_simulation/sim.py`: Run the particle simulation and visualize the results. Each frame of the simulation is saved with matplotlib's FFmpeg writer for visualization.  
+`particle_simulation/sim_imageio.py`: Run the particle simulation with live visualization. The simulation is visualized in real-time using the ImageIO library for video writing.
+`particle_simulation_3d/sim.py`: Run the particle simulation in three-dimensional space and visualize the results. Each frame of the simulation is saved with matplotlib's FFmpeg writer for visualization.
 
 **The following are the high level steps of the simulation:**
 1. Set constants for the simulation (number of particles, simulation space size, etc.).
@@ -222,10 +234,19 @@ This project focuses on simulating particle interactions using CUDA and other te
     - The profiling results are saved in `profile_results.prof`.
     - Profiling shows that after optimization, the simulation spends most of its time converting to Numpy arrays for visualization and writing frames to disk.
 
-### Simulation Video Example
+### Simulation Video Examples
+
+#### 2D Simulation
 Direct download link for the video: [particle_simulation_ex_10secs.mp4](https://github.com/SantiagoEnriqueGA/gpu_projects/raw/refs/heads/main/particle_simulation/vids/particle_simulation_ex_10secs.mp4)  
+
 Click the image below to watch the video on YouTube:  
 [![Watch the Video](https://img.youtube.com/vi/qFheTckbi9w/hqdefault.jpg)](https://youtu.be/qFheTckbi9w)
+
+#### 3D Simulation
+Direct download link for the video: [particle_simulation_3d_ex_10secs.mp4](https://github.com/SantiagoEnriqueGA/gpu_projects/raw/refs/heads/main/particle_simulation_3d/vids/particle_simulation_ex_10secs_3d.mp4)
+
+Click the image below to watch the video on YouTube:  
+[![Watch the Video](https://img.youtube.com/vi/xRSTzirz3YM/hqdefault.jpg)](https://youtu.be/xRSTzirz3YM)
 
 
 ### CUDA Kernels
