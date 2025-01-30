@@ -299,14 +299,7 @@ handle_boundary_collisions_cudaKernel:  CPU:    82.937 us   +/-  9.473 (min:    
 ## Lorenz Attractor
 This project focuses on simulating the Lorenz Attractor using different computational techniques. This is a classic example of a chaotic system that exhibits sensitive dependence on initial conditions. It is also a problem that is not easily parallelizable due to the iterative nature of the calculations, making it a good candidate for comparison between CPU and GPU implementations.
 The Lorenz Attractor is a set of chaotic solutions to a system of differential equations that exhibit sensitive dependence on initial conditions. The attractor is defined by the following equations:
-$$
-\begin{aligned}
-X' &= \sigma (Y - X) \\
-Y' &= X (\rho - Z) - Y \\
-Z' &= X Y - \beta Z
-\end{aligned}
-$$
-where $X, Y, Z$ are the state variables, and $\sigma, \rho, \beta$ are the parameters of the system.
+$X' = \sigma (Y - X)$, $Y' = X(\rho - Z) - Y$, $Z' = XY - \beta Z$, where $X, Y, Z$ are the state variables, and $\sigma, \rho, \beta$ are the parameters of the system.
 
 ### Main Scripts
 - `lorenz.py`: Main script to run the Lorenz Attractor simulation using different techniques and compare their performance.
