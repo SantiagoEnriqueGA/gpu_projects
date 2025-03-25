@@ -1,6 +1,11 @@
 # pycache
 __pycache__/
 
+# Cython files
+*.pyd
+*.so
+*.c
+
 # Archives
 __archive/
 
@@ -15,9 +20,6 @@ fractals/mandelbrot/plots/*
 
 # Julia fractal plots
 fractals/julia_set/plots/*
-
-
-
 
 # Exceptions for examples
 !/fractals/julia_set/plots/cupy_julia_size2_iters50.png

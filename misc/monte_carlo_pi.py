@@ -1,5 +1,5 @@
 import numpy as np
-from numba import jit, config
+from numba import jit, config, prange
 import matplotlib.pyplot as plt
 import time
 import cupy as cp
@@ -13,6 +13,11 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Wrapper functions for timing and comparing Monte Carlo Pi calculations
 # -------------------------------------------------------------------------------------------------
+@avg_timing_decorator
+def monteCarloPiBase_AVG(num_samples):
+    """Wrapper function for average timing of base Monte Carlo Pi calculation."""
+    return monteCarloPiBase(num_samples)
+
 @avg_timing_decorator
 def monteCarloPiNumpy_AVG(num_samples):
     """Wrapper function for average timing of Monte Carlo Pi calculation using NumPy."""
@@ -33,9 +38,24 @@ def monteCarloPiCuPyKernel_AVG(num_samples):
     """Wrapper function for average timing of Monte Carlo Pi calculation using a CuPy CUDA kernel."""
     return monteCarloPiCuPyKernel(num_samples)
 
+@avg_timing_decorator
+def monteCarloPiCython_AVG(num_samples):
+    """Wrapper function for average timing of Monte Carlo Pi calculation using Cython."""
+    return monteCarloPiCython(num_samples)
 
 # Actual Monte Carlo Pi calculation functions
 # -------------------------------------------------------------------------------------------------
+
+def monteCarloPiBase(num_samples):
+    """Base function for Monte Carlo Pi calculation."""
+    inside_circle = 0
+    for _ in range(num_samples):
+        x = np.random.rand()
+        y = np.random.rand()
+        if x**2 + y**2 <= 1.0:
+            inside_circle += 1
+    pi_estimate = (inside_circle / num_samples) * 4
+    return pi_estimate
 
 def monteCarloPiNumpy(num_samples):
     """Estimate Pi using Monte Carlo method with NumPy."""
@@ -45,13 +65,11 @@ def monteCarloPiNumpy(num_samples):
     pi_estimate = (inside_circle.sum() / num_samples) * 4
     return pi_estimate
 
-# The keyword argument 'parallel=True' was specified but no transformation for parallel execution was possible.
-# @jit(nopython=True, parallel=True)
-@jit(nopython=True)
+@jit(nopython=True, parallel=True, cache=True)
 def monteCarloPiNumba(num_samples):
     """Estimate Pi using Monte Carlo method with Numba JIT."""
     inside_circle = 0
-    for _ in range(num_samples):
+    for _ in prange(num_samples):
         x = np.random.rand()
         y = np.random.rand()
         if x**2 + y**2 <= 1.0:
@@ -95,39 +113,55 @@ def monteCarloPiCuPyKernel(num_samples):
     pi_estimate = (inside.sum() / num_samples) * 4
     return float(pi_estimate)
 
+def monteCarloPiCython(num_samples):
+    """Estimate Pi using Monte Carlo method with Cython."""
+    # Import the Cython function from the compiled module.
+    from monte_carlo_pi_cython import _monteCarloPiCython
+    return _monteCarloPiCython(num_samples) 
+
 
 def main():
     # Parameters
-    num_samples = 100_000_000
+    # num_samples = 100_000_000
+    num_samples = 1_000_000
     
     print(f"Estimating Pi using {num_samples:,} samples.")
 
+    pi_base = monteCarloPiBase_AVG(num_samples)
     pi_numpy = monteCarloPiNumpy_AVG(num_samples)
     pi_numba = monteCarloPiNumba_AVG(num_samples)
     if check_cupy():
         pi_cupy = monteCarloPiCuPy_AVG(num_samples)
         pi_cupy_kernel = monteCarloPiCuPyKernel_AVG(num_samples)
+    pi_cython = monteCarloPiCython_AVG(num_samples)
     
-    print(f"\nPi estimate using NumPy:       {pi_numpy}")
+    print(f"\nPi estimate using Base:        {pi_base}")
+    print(f"Pi estimate using NumPy:       {pi_numpy}")
     print(f"Pi estimate using Numba:       {pi_numba}")
     if check_cupy():
         print(f"Pi estimate using CuPy:        {pi_cupy}")
         print(f"Pi estimate using CuPy Kernel: {pi_cupy_kernel}")
+    print(f"Pi estimate using Cython:      {pi_cython}")
+        
     
-
-
 
 def plot():
     # Plot a performance comparison 
     # --------------------------------------------------------------------------------------------
     print("")
-    num_samples = [10**i for i in range(4, 9)]
-    times_numpy = []; times_numba = []; times_cupy = []; times_cupy_kernel = []
+    num_samples = [10**i for i in range(4, 9)] 
+    
+    times_numpy = []; times_numba = []
+    times_cupy = []; times_cupy_kernel = []
+    times_cython = []
+    
     num_runs = 5
     for n in num_samples:
         print(f"Estimating Pi using {n:,} samples.")
-        time_numba = 0; time_numpy = 0; time_cupy = 0; time_cupy_kernel = 0
-        for _ in range(num_runs):
+        time_numba = 0; time_numpy = 0; 
+        time_cupy = 0; time_cupy_kernel = 0
+        time_cython = 0        
+        for _ in range(num_runs):           
             start = time.time()
             monteCarloPiNumpy(n)
             time_numpy += time.time() - start
@@ -135,6 +169,10 @@ def plot():
             start = time.time()
             monteCarloPiNumba(n)
             time_numba += time.time() - start
+            
+            start = time.time()
+            monteCarloPiCython(n)
+            time_cython += time.time() - start
 
             if check_cupy():
                 start = time.time()
@@ -147,12 +185,14 @@ def plot():
 
         times_numpy.append(time_numpy / num_runs)
         times_numba.append(time_numba / num_runs)
+        times_cython.append(time_cython / num_runs)
         if check_cupy():
             times_cupy.append(time_cupy / num_runs)
             times_cupy_kernel.append(time_cupy_kernel / num_runs)
         
         print(f"\tAverage execution time for NumPy:       {times_numpy[-1]:.4f} seconds")
         print(f"\tAverage execution time for Numba:       {times_numba[-1]:.4f} seconds")
+        print(f"\tAverage execution time for Cython:      {times_cython[-1]:.4f} seconds")
         if check_cupy():
             print(f"\tAverage execution time for CuPy:        {times_cupy[-1]:.4f} seconds")
             print(f"\tAverage execution time for CuPy Kernel: {times_cupy_kernel[-1]:.4f} seconds")
@@ -162,10 +202,11 @@ def plot():
     plt.figure(figsize=(10, 6))
     plt.plot(num_samples, times_numpy, label="NumPy")
     plt.plot(num_samples, times_numba, label="Numba")
+    plt.plot(num_samples, times_cython, label="Cython")
     if check_cupy():
         plt.plot(num_samples, times_cupy, label="CuPy")
         plt.plot(num_samples, times_cupy_kernel, label="CuPy Kernel")
-    plt.xscale('log')
+    # plt.xscale('log')
     plt.yscale('log')
     plt.xlabel("Number of Samples")
     plt.ylabel("Execution Time (s)")
@@ -177,8 +218,8 @@ def plot():
 
         
 if __name__ == "__main__":
-    # main()
-    plot()
+    main()
+    # plot()
     
 
 # OUTPUT:

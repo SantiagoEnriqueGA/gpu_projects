@@ -65,6 +65,7 @@ def check_cupy():
         suppress_output()
         import cupy as cp
         cp.cuda.Device(0)
+        cp.random.rand(100)
         enable_output()
         return True
     except:
